@@ -8,8 +8,10 @@ import (
 	"os"
 )
 
-// GetMySQLDB connection
-func GetMySQLDB() *sql.DB {
+var db *sql.DB
+
+// InitConnectionDB connection
+func InitConnectionDB() {
 
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
@@ -19,12 +21,17 @@ func GetMySQLDB() *sql.DB {
 
 	desc := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
 
-	db := createConnectionMySQL(desc)
+	db = createConnectionMySQL(desc)
+}
 
+func GetMySQLDB() *sql.DB {
 	return db
 }
 
 func createConnectionMySQL(desc string) *sql.DB {
+
+	fmt.Println(desc)
+
 	val := url.Values{}
 	val.Add("parseTime", "1")
 	val.Add("loc", "Asia/Jakarta")

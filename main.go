@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"hacktiv8/final/config"
 	"hacktiv8/final/model"
 	"hacktiv8/final/repository"
 	"hacktiv8/final/router"
@@ -12,14 +14,22 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func main() {
+func init() {
+
 	if env := os.Getenv("GO_ENV"); env != "production" {
 		err := godotenv.Load()
+
+		fmt.Println("diisini")
 
 		if err != nil {
 			log.Fatal("Error loading .env file")
 		}
 	}
+
+	config.InitConnectionDB()
+}
+
+func main() {
 
 	router := router.InitRouter()
 

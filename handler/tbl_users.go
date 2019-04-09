@@ -14,8 +14,6 @@ func UserFindByID(w http.ResponseWriter, r *http.Request) {
 
 	db := config.GetMySQLDB()
 
-	defer db.Close()
-
 	vars := mux.Vars(r)
 	res := helper.Response{}
 
@@ -31,7 +29,6 @@ func UserFindByID(w http.ResponseWriter, r *http.Request) {
 
 	res.Body.Payload = user
 
-	return
 }
 
 // UserFindAll handler
@@ -54,7 +51,5 @@ func UserFindAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res.Body.Payload = users
-
-	return
 
 }
