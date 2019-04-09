@@ -2,31 +2,24 @@ package repository
 
 import (
 	"database/sql"
-	"hacktiv8/final/model"
+	"hacktiv8/final/module/users"
+	"hacktiv8/final/module/users/model"
+
 	"time"
 )
 
-// UserRepository interface
-type UserRepository interface {
-	Save(*model.User) error
-	Update(string, *model.User) error
-	Delete(string) error
-	FindByID(string) (*model.User, error)
-	FindAll() (model.Users, error)
-}
-
-// UserRepositoryDB struct
-type UserRepositoryDB struct {
+// mysqlUsersRepository struct
+type mysqlUsersRepository struct {
 	db *sql.DB
 }
 
 // NewUserRepositoryMysql NewUserRepositoryMysql
-func NewUserRepositoryMysql(db *sql.DB) *UserRepositoryDB {
-	return &UserRepositoryDB{db}
+func NewUserRepositoryMysql(db *sql.DB) users.Repository {
+	return &mysqlUsersRepository{db}
 }
 
 // Save User
-func (r *UserRepositoryDB) Save(u *model.User) error {
+func (r *mysqlUsersRepository) Save(u *model.User) error {
 
 	query := `INSERT INTO tbl_users (
 	username,
@@ -57,7 +50,7 @@ func (r *UserRepositoryDB) Save(u *model.User) error {
 }
 
 // Update User
-func (r *UserRepositoryDB) Update(id string, u *model.User) error {
+func (r *mysqlUsersRepository) Update(id string, u *model.User) error {
 
 	query := `
 	UPDATE tbl_users SET 
@@ -89,7 +82,7 @@ func (r *UserRepositoryDB) Update(id string, u *model.User) error {
 }
 
 // Delete User
-func (r *UserRepositoryDB) Delete(id string) error {
+func (r *mysqlUsersRepository) Delete(id string) error {
 
 	query := `
 	UPDATE tbl_users SET 
@@ -114,7 +107,7 @@ func (r *UserRepositoryDB) Delete(id string) error {
 }
 
 // FindByID User
-func (r *UserRepositoryDB) FindByID(id string) (*model.User, error) {
+func (r *mysqlUsersRepository) FindByID(id string) (*model.User, error) {
 
 	query := `
 	SELECT 
@@ -149,7 +142,7 @@ func (r *UserRepositoryDB) FindByID(id string) (*model.User, error) {
 }
 
 // FindAll User
-func (r *UserRepositoryDB) FindAll() (model.Users, error) {
+func (r *mysqlUsersRepository) FindAll() (model.Users, error) {
 
 	query := `
 	SELECT 

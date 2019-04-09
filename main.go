@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"hacktiv8/final/config"
-	"hacktiv8/final/model"
-	"hacktiv8/final/repository"
 	"hacktiv8/final/router"
 	"log"
 	"net/http"
@@ -35,15 +33,4 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(":8081", router))
 
-}
-
-func findUserAll(repo repository.UserRepository) (model.Users, error) {
-
-	users, err := repo.FindAll()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return users, nil
 }
