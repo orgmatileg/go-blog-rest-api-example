@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"hacktiv8/final/config"
 	"hacktiv8/final/router"
 	"log"
@@ -16,8 +15,6 @@ func init() {
 
 	if env := os.Getenv("GO_ENV"); env != "production" {
 		err := godotenv.Load()
-
-		fmt.Println("diisini")
 
 		if err != nil {
 			log.Fatal("Error loading .env file")

@@ -15,6 +15,13 @@ func NewUsersUsecase(u users.Repository) users.Usecase {
 	}
 }
 
+func (u *usersUsercase) Save(mu *model.User) (err error) {
+
+	err = u.usersRepo.Save(mu)
+
+	return err
+}
+
 func (u *usersUsercase) FindByID(idUser string) (mu *model.User, err error) {
 
 	mu, err = u.usersRepo.FindByID(idUser)
@@ -31,4 +38,18 @@ func (u *usersUsercase) FindAll(limit, offset, order string) (lmu model.Users, e
 	lmu, err = u.usersRepo.FindAll(limit, offset, order)
 
 	return lmu, err
+}
+
+func (u *usersUsercase) Update(idUser string, mu *model.User) (err error) {
+
+	err = u.usersRepo.Update(idUser, mu)
+
+	return err
+}
+
+func (u *usersUsercase) Delete(idUser string) (err error) {
+
+	err = u.usersRepo.Delete(idUser)
+
+	return err
 }

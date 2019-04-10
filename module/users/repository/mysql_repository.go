@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"hacktiv8/final/module/users"
 	"hacktiv8/final/module/users/model"
-
 	"time"
 )
 
@@ -98,7 +97,7 @@ func (r *mysqlUsersRepository) Delete(id string) error {
 
 	defer statement.Close()
 
-	_, err = statement.Exec(id, time.Now())
+	_, err = statement.Exec(time.Now(), id)
 
 	if err != nil {
 		return err
