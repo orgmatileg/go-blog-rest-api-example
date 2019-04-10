@@ -26,9 +26,9 @@ func (u *usersUsercase) FindByID(idUser string) (mu *model.User, err error) {
 	return mu, nil
 }
 
-func (u *usersUsercase) FindAll() (lmu model.Users, err error) {
+func (u *usersUsercase) FindAll(limit, offset, order string) (lmu model.Users, err error) {
 
-	lmu, err = u.usersRepo.FindAll()
+	lmu, err = u.usersRepo.FindAll(limit, offset, order)
 
 	return lmu, err
 }

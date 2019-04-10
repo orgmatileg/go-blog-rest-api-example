@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"hacktiv8/final/module/users"
 	"hacktiv8/final/module/users/model"
 
@@ -142,9 +143,9 @@ func (r *mysqlUsersRepository) FindByID(id string) (*model.User, error) {
 }
 
 // FindAll User
-func (r *mysqlUsersRepository) FindAll() (model.Users, error) {
+func (r *mysqlUsersRepository) FindAll(limit, offset, order string) (model.Users, error) {
 
-	query := `
+	query := fmt.Sprintf(`
 	SELECT 
 	user_id,
 	username,
@@ -156,7 +157,10 @@ func (r *mysqlUsersRepository) FindAll() (model.Users, error) {
 	created_at,
 	updated_at 
 	FROM tbl_users
-	WHERE deleted_at is NULL`
+	WHERE deleted_at is NULL
+	ORDER BY created_at %s
+	LIMIT %s 
+	OFFSET %s`, order, limit, offset)
 
 	var users model.Users
 

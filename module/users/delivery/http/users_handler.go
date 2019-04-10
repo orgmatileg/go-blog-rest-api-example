@@ -49,15 +49,32 @@ func (u *HttpUsersHandler) UserFindByIDHttpHandler(w http.ResponseWriter, r *htt
 // UserFindAllHttpHandler handler
 func (u *HttpUsersHandler) UserFindAllHttpHandler(w http.ResponseWriter, r *http.Request) {
 
-	db := config.GetMySQLDB()
+	queryParam := r.URL.Query()
 
-	defer db.Close()
+	// Set default query
+	limit := "10"
+	offset := "0"
+	order := "desc"
+
+	if v := queryParam.Get("limit"); v != "" {
+		limit = queryParam.Get("limit")
+	}
+
+	if v := queryParam.Get("offset"); v != "" {
+		offset = queryParam.Get("offset")
+	}
+
+	if v := queryParam.Get("order"); v != "" {
+		order = queryParam.Get("order")
+	}
+
+	db := config.GetMySQLDB()
 
 	res := helper.Response{}
 
 	userRepo := repository.NewUserRepositoryMysql(db)
 
-	users, err := userRepo.FindAll()
+	users, err := userRepo.FindAll(limit, offset, order)
 
 	defer res.ServeJSON(w, r)
 
