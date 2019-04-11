@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hacktiv8/final/module/users"
 	"hacktiv8/final/module/users/model"
+	"strconv"
 	"time"
 )
 
@@ -40,17 +41,27 @@ func (r *mysqlUsersRepository) Save(u *model.User) error {
 
 	defer statement.Close()
 
-	_, err = statement.Exec(u.Username, u.Email, u.Password, u.FirstName, u.LastName, u.PhotoProfile, u.CreatedAt, u.UpdatedAt)
+	result, err := statement.Exec(u.Username, u.Email, u.Password, u.FirstName, u.LastName, u.PhotoProfile, u.CreatedAt, u.UpdatedAt)
 
 	if err != nil {
 		return err
 	}
 
+	lastInsertIdInt64, err := result.LastInsertId()
+
+	if err != nil {
+		return err
+	}
+
+	lastInsertIdStr := strconv.FormatInt(lastInsertIdInt64, 10)
+
+	u.UserID = lastInsertIdStr
+
 	return nil
 }
 
 // Update User
-func (r *mysqlUsersRepository) Update(id string, u *model.User) error {
+func (r *mysqlUsersRepository) Update(id string, u *model.User) (rowAffected *string, err error) {
 
 	query := `
 	UPDATE tbl_users SET 
@@ -67,18 +78,26 @@ func (r *mysqlUsersRepository) Update(id string, u *model.User) error {
 	statement, err := r.db.Prepare(query)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer statement.Close()
 
-	_, err = statement.Exec(u.Username, u.Email, u.Password, u.FirstName, u.LastName, u.PhotoProfile, u.UpdatedAt, id)
+	result, err := statement.Exec(u.Username, u.Email, u.Password, u.FirstName, u.LastName, u.PhotoProfile, u.UpdatedAt, id)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	rowsAffectedInt64, err := result.RowsAffected()
+
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffectedStr := strconv.FormatInt(rowsAffectedInt64, 10)
+
+	return &rowsAffectedStr, nil
 }
 
 // Delete User

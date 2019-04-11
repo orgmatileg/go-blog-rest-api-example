@@ -35,7 +35,11 @@ func (c *Response) ServeJSON(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 
-		w.Write(b)
+		_, err = w.Write(b)
+
+		if err != nil {
+			log.Println(err)
+		}
 	}()
 
 	w.Header().Add("Content-Type", "application/json")
@@ -80,5 +84,4 @@ func (c *Response) ServeJSON(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	return
 }

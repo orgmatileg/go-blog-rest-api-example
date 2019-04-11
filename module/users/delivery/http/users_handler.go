@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"hacktiv8/final/helper"
 	"hacktiv8/final/module/users"
 	"hacktiv8/final/module/users/model"
@@ -135,14 +136,14 @@ func (u *HttpUsersHandler) UserUpdateHttpHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	err = u.UUsecase.Update(idP, mu)
+	rowsAffected, err := u.UUsecase.Update(idP, mu)
 
 	if err != nil {
 		res.Err = err
 		return
 	}
 
-	res.Body.Payload = mu
+	res.Body.Payload = fmt.Sprintf("Total rows affected: %s", *rowsAffected)
 
 }
 

@@ -40,11 +40,11 @@ func (u *usersUsercase) FindAll(limit, offset, order string) (lmu model.Users, e
 	return lmu, err
 }
 
-func (u *usersUsercase) Update(idUser string, mu *model.User) (err error) {
+func (u *usersUsercase) Update(idUser string, mu *model.User) (rowAffected *string, err error) {
 
-	err = u.usersRepo.Update(idUser, mu)
+	rowAffected, err = u.usersRepo.Update(idUser, mu)
 
-	return err
+	return rowAffected, err
 }
 
 func (u *usersUsercase) Delete(idUser string) (err error) {
