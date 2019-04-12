@@ -3,7 +3,7 @@ package helper
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -26,16 +26,19 @@ func (i *ImgBB) Upload(base64 string) (imgURL string, err error) {
 	form := url.Values{
 		"key":   {i.APIKey},
 		"image": {base64},
-		"name":  {"Hello"},
+		"name":  {"Image"},
 	}
-
-	fmt.Println(form)
 
 	body := bytes.NewBufferString(form.Encode())
 	rsp, err := http.Post(request_url, "application/x-www-form-urlencoded", body)
 	if err != nil {
 		return imgURL, err
 	}
+
+	if rsp.StatusCode != 200 {
+		return "", errors.New("Upload image fail")
+	}
+
 	defer rsp.Body.Close()
 	body_byte, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {

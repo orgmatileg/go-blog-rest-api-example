@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"fmt"
+	"hacktiv8/final/helper"
 	"hacktiv8/final/module/users"
 	"hacktiv8/final/module/users/model"
 	"strconv"
@@ -21,6 +22,23 @@ func NewUserRepositoryMysql(db *sql.DB) users.Repository {
 
 // Save User
 func (r *mysqlUsersRepository) Save(u *model.User) error {
+
+	// Photo Profile step
+
+	defaultPhotoProfile := "https://i.ibb.co/whHn3mf/default-photo-profile.png"
+
+	if u.PhotoProfile != "" {
+		imgBB := helper.NewImgBBConn()
+		imgURL, err := imgBB.Upload(u.PhotoProfile)
+
+		if err != nil {
+			return err
+		}
+
+		u.PhotoProfile = imgURL
+	} else {
+		u.PhotoProfile = defaultPhotoProfile
+	}
 
 	query := `INSERT INTO tbl_users (
 	username,
