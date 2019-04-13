@@ -12,8 +12,8 @@ import (
 	_usersUcase "hacktiv8/final/module/users/usecase"
 
 	hContactUs "hacktiv8/final/module/contact_us/delivery/http"
-	_ContactUsRepo "hacktiv8/final/module/contact_us/repository"
-	_ContactUsUcase "hacktiv8/final/module/contact_us/usecase"
+	_contactUsRepo "hacktiv8/final/module/contact_us/repository"
+	_contactUsUcase "hacktiv8/final/module/contact_us/usecase"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -54,8 +54,8 @@ func InitRouter() *mux.Router {
 	hUser.NewUsersHttpHandler(rv1, usersUcase)
 
 	// Contact Us
-	contactUsRepo := _ContactUsRepo.NewContactUsRepositoryMysql(dbConn)
-	contactUsUcase := _ContactUsUcase.NewContactUsUsecase(contactUsRepo)
+	contactUsRepo := _contactUsRepo.NewContactUsRepositoryMysql(dbConn)
+	contactUsUcase := _contactUsUcase.NewContactUsUsecase(contactUsRepo)
 	hContactUs.NewContactUsHttpHandler(rv1, contactUsUcase)
 
 	return r
