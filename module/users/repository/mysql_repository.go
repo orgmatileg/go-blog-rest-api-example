@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"hacktiv8/final/helper"
 	"hacktiv8/final/module/users"
 	"hacktiv8/final/module/users/model"
 	"strconv"
@@ -22,23 +21,6 @@ func NewUserRepositoryMysql(db *sql.DB) users.Repository {
 
 // Save User
 func (r *mysqlUsersRepository) Save(u *model.User) error {
-
-	// Photo Profile step
-
-	defaultPhotoProfile := "https://i.ibb.co/whHn3mf/default-photo-profile.png"
-
-	if u.PhotoProfile != "" {
-		imgBB := helper.NewImgBBConn()
-		imgURL, err := imgBB.Upload(u.PhotoProfile)
-
-		if err != nil {
-			return err
-		}
-
-		u.PhotoProfile = imgURL
-	} else {
-		u.PhotoProfile = defaultPhotoProfile
-	}
 
 	query := `INSERT INTO tbl_users (
 	username,
@@ -74,71 +56,6 @@ func (r *mysqlUsersRepository) Save(u *model.User) error {
 	lastInsertIdStr := strconv.FormatInt(lastInsertIdInt64, 10)
 
 	u.UserID = lastInsertIdStr
-
-	return nil
-}
-
-// Update User
-func (r *mysqlUsersRepository) Update(id string, u *model.User) (rowAffected *string, err error) {
-
-	query := `
-	UPDATE tbl_users SET 
-	username=?, 
-	email=?, 
-	password=?,
-	first_name=?,
-	last_name=?,
-	photo_profile=?,
-	updated_at=?
-	WHERE user_id=?
-	`
-
-	statement, err := r.db.Prepare(query)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer statement.Close()
-
-	result, err := statement.Exec(u.Username, u.Email, u.Password, u.FirstName, u.LastName, u.PhotoProfile, u.UpdatedAt, id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	rowsAffectedInt64, err := result.RowsAffected()
-
-	if err != nil {
-		return nil, err
-	}
-
-	rowsAffectedStr := strconv.FormatInt(rowsAffectedInt64, 10)
-
-	return &rowsAffectedStr, nil
-}
-
-// Delete User
-func (r *mysqlUsersRepository) Delete(id string) error {
-
-	query := `
-	UPDATE tbl_users SET 
-	deleted_at = ?
-	WHERE user_id = ?`
-
-	statement, err := r.db.Prepare(query)
-
-	if err != nil {
-		return err
-	}
-
-	defer statement.Close()
-
-	_, err = statement.Exec(time.Now(), id)
-
-	if err != nil {
-		return err
-	}
 
 	return nil
 }
@@ -216,9 +133,98 @@ func (r *mysqlUsersRepository) FindAll(limit, offset, order string) (model.Users
 		if err != nil {
 			return nil, err
 		}
-
 		users = append(users, user)
 	}
 
 	return users, nil
+}
+
+// Update User
+func (r *mysqlUsersRepository) Update(id string, u *model.User) (rowAffected *string, err error) {
+
+	query := `
+			UPDATE tbl_users SET 
+			username=?, 
+			email=?, 
+			password=?,
+			first_name=?,
+			last_name=?,
+			photo_profile=?,
+			updated_at=?
+			WHERE user_id=?
+		`
+
+	statement, err := r.db.Prepare(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer statement.Close()
+
+	result, err := statement.Exec(u.Username, u.Email, u.Password, u.FirstName, u.LastName, u.PhotoProfile, time.Now(), id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffectedInt64, err := result.RowsAffected()
+
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffectedStr := strconv.FormatInt(rowsAffectedInt64, 10)
+
+	rowAffected = &rowsAffectedStr
+
+	return rowAffected, nil
+
+}
+
+// Delete User
+func (r *mysqlUsersRepository) Delete(id string) error {
+
+	query := `
+	UPDATE tbl_users SET 
+	deleted_at = ?
+	WHERE user_id = ?`
+
+	statement, err := r.db.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	_, err = statement.Exec(time.Now(), id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// IsExistsByID User
+func (r *mysqlUsersRepository) IsExistsByID(idUser string) (isExist bool, err error) {
+
+	query := "SELECT EXISTS(SELECT TRUE from tbl_users WHERE user_id = ?)"
+
+	statement, err := r.db.Prepare(query)
+
+	if err != nil {
+		return false, err
+	}
+
+	defer statement.Close()
+
+	err = statement.QueryRow(idUser).Scan(&isExist)
+
+	if err != nil {
+		return false, err
+	}
+
+	return isExist, nil
 }

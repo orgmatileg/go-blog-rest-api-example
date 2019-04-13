@@ -26,6 +26,7 @@ func NewUsersHttpHandler(r *mux.Router, uu users.Usecase) {
 	r.HandleFunc("/users/{id}", handler.UserFindByIDHttpHandler).Methods("GET")
 	r.HandleFunc("/users/{id}", handler.UserUpdateHttpHandler).Methods("PUT")
 	r.HandleFunc("/users/{id}", handler.UserDeleteHttpHandler).Methods("DELETE")
+	r.HandleFunc("/users/{id}/exists", handler.UserIsExistsByIDHttpHandler).Methods("GET")
 }
 
 // UserSaveHttpHandler handler
@@ -125,9 +126,9 @@ func (u *HttpUsersHandler) UserUpdateHttpHandler(w http.ResponseWriter, r *http.
 
 	decoder := json.NewDecoder(r.Body)
 
-	mu := model.NewUser()
+	var mu model.User
 
-	err := decoder.Decode(mu)
+	err := decoder.Decode(&mu)
 
 	defer res.ServeJSON(w, r)
 
@@ -136,18 +137,20 @@ func (u *HttpUsersHandler) UserUpdateHttpHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	rowsAffected, err := u.UUsecase.Update(idP, mu)
+	rowsAffected, err := u.UUsecase.Update(idP, &mu)
 
 	if err != nil {
 		res.Err = err
 		return
 	}
 
+	fmt.Println(rowsAffected, err)
+
 	res.Body.Payload = fmt.Sprintf("Total rows affected: %s", *rowsAffected)
 
 }
 
-// UserFindByIDHttpHandler handler
+// UserDeleteHttpHandler handler
 func (u *HttpUsersHandler) UserDeleteHttpHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -166,5 +169,30 @@ func (u *HttpUsersHandler) UserDeleteHttpHandler(w http.ResponseWriter, r *http.
 	}
 
 	res.Body.Payload = "OK"
+
+}
+
+// UserIsExistsByIDHttpHandler handler
+func (u *HttpUsersHandler) UserIsExistsByIDHttpHandler(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	res := helper.Response{}
+
+	idP := vars["id"]
+
+	isExists, err := u.UUsecase.IsExistsByID(idP)
+
+	defer res.ServeJSON(w, r)
+
+	if err != nil {
+		res.Err = err
+		return
+	}
+
+	if isExists {
+		res.Body.Payload = "ID User " + idP + " is Exists!"
+	} else {
+		res.Body.Payload = "ID User " + idP + " is Not Exists!"
+	}
 
 }

@@ -1,16 +1,15 @@
 package router
 
 import (
-	"encoding/json"
 	"fmt"
 	"hacktiv8/final/config"
-	"hacktiv8/final/helper"
 	m "hacktiv8/final/middleware"
-	h "hacktiv8/final/module/users/delivery/http"
+	hAuth "hacktiv8/final/module/auth/delivery/http"
+	_authRepo "hacktiv8/final/module/auth/repository"
+	_authUcase "hacktiv8/final/module/auth/usecase"
+	hUser "hacktiv8/final/module/users/delivery/http"
 	_usersRepo "hacktiv8/final/module/users/repository"
 	_usersUcase "hacktiv8/final/module/users/usecase"
-	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,36 +26,14 @@ func InitRouter() *mux.Router {
 	// Endpoint for testing app or such a thing
 	r.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 
-		t := struct {
-			Image string `json:"image"`
-		}{}
-
-		b, err := ioutil.ReadAll(r.Body)
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		err = json.Unmarshal(b, &t)
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		imgBB := helper.NewImgBBConn()
-
-		imgURL, err := imgBB.Upload(t.Image)
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		fmt.Println(imgURL)
-
+		fmt.Fprintf(w, "Test!")
 	}).Methods("POST")
 
+	// Init versioning API
 	rv1 := r.PathPrefix("/v1").Subrouter()
 
+	// Middleware
+	rv1.Use(m.CheckAuth)
 	rv1.Use(m.CORS)
 
 	// Get DB Conn
@@ -65,7 +42,12 @@ func InitRouter() *mux.Router {
 	// Users
 	usersRepo := _usersRepo.NewUserRepositoryMysql(dbConn)
 	usersUcase := _usersUcase.NewUsersUsecase(usersRepo)
-	h.NewUsersHttpHandler(rv1, usersUcase)
+	hUser.NewUsersHttpHandler(rv1, usersUcase)
+
+	// Auth
+	authRepo := _authRepo.NewAuthRepositoryMysql(dbConn)
+	authUcase := _authUcase.NewAuthUsecase(authRepo)
+	hAuth.NewAuthHttpHandler(rv1, authUcase)
 
 	return r
 }

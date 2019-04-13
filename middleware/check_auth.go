@@ -1,92 +1,88 @@
 package middleware
 
 import (
+	"errors"
+	"hacktiv8/final/config"
+	"hacktiv8/final/helper"
 	"net/http"
+	"regexp"
+	"strings"
 )
 
 // CheckAuth func Middleware
 func CheckAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		// // regex untuk hapus /v1/
-		// re := regexp.MustCompile("/v[0-9]{1}/")
-		// URLRequest := re.ReplaceAllString(c.Input.URL(), "")
+		bypassedURLs := []string{
+			"auth:POST",
+		}
 
-		// for _, uri := range bypassedURLs {
+		// regex untuk hapus /v1/
+		re := regexp.MustCompile("/v[0-9]{1}/")
+		URLRequest := re.ReplaceAllString(r.RequestURI, "")
 
-		// 	// Cek method dan URL yang diperbolehkan akses tanpa token
-		// 	urlAndMethod := strings.Split(uri, ":")
+		for _, uri := range bypassedURLs {
 
-		// 	// Hilangkan semua string setelah -> /
-		// 	re = regexp.MustCompile("/.*")
-		// 	URLRequestWithRegex := re.ReplaceAllString(URLRequest, "")
+			// Cek method dan URL yang diperbolehkan akses tanpa token
+			urlAndMethod := strings.Split(uri, ":")
 
-		// 	// Sementara
-		// 	if urlAndMethod[0] == URLRequest && urlAndMethod[1] == "POST" {
-		// 		return
-		// 	}
+			// Hilangkan semua string setelah -> /
+			re = regexp.MustCompile("/.*")
+			URLRequestWithRegex := re.ReplaceAllString(URLRequest, "")
 
-		// 	// Jika url sama dengan url yang terdaftar & method yang di allow adalah ALL
-		// 	// berarti semua method diperbolehkan akses tanpa token
-		// 	if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "ALL" {
-		// 		return
-		// 	}
-		// 	if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "POST" {
-		// 		return
-		// 	}
-		// 	if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "GET" {
-		// 		return
-		// 	}
-		// 	if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "PUT" {
-		// 		return
-		// 	}
-		// 	if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "DELETE" {
-		// 		return
-		// 	}
-		// }
+			// Jika url sama dengan url yang terdaftar & method yang di allow adalah ALL
+			// berarti semua method diperbolehkan akses tanpa token
+			if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "ALL" {
+				next.ServeHTTP(w, r)
+				return
+			}
+			if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "POST" {
+				next.ServeHTTP(w, r)
+				return
+			}
+			if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "GET" {
+				next.ServeHTTP(w, r)
+				return
+			}
+			if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "PUT" {
+				next.ServeHTTP(w, r)
+				return
+			}
+			if urlAndMethod[0] == URLRequestWithRegex && urlAndMethod[1] == "DELETE" {
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
 
-		// res := &nst.Response{
-		// 	StatusCode:    401,
-		// 	StatusMessage: "Error",
-		// 	Description:   "Unauthorized",
-		// 	Href:          c.Input.URI(),
-		// }
+		res := helper.Response{}
+		res.Err = errors.New("Unauthorized")
+		res.Body.StatusCode = 401
+		res.Body.StatusMessage = "Error"
+		res.Body.Href = r.RequestURI
 
-		// if token := c.Request.URL.Query().Get("token"); token == "" {
-		// 	if token = c.Request.Header.Get("Authorization"); token != "" {
+		tokenFromRequest := r.Header.Get("Authorization")
 
-		// 		re := regexp.MustCompile("(?i)bearer\\s+")
-		// 		refinedToken := re.ReplaceAllString(token, "")
-		// 		jwtToken := &helpers.Token{
-		// 			Key:         JWTKey,
-		// 			TokenString: refinedToken,
-		// 		}
-		// 		if ok := jwtToken.IsValidToken(); !ok {
-		// 			res.Description = "Invalid or malformed Token"
-		// 		} else {
-		// 			if claims := jwtToken.GetPayload(); claims != nil {
-		// 				for k, v := range claims {
-		// 					switch v.(type) {
-		// 					case string:
-		// 						c.Request.Header.Add(k, v.(string))
-		// 					case float32:
-		// 						c.Request.Header.Add(k, fmt.Sprintf("%.f", v))
-		// 					case float64:
-		// 						c.Request.Header.Add(k, fmt.Sprintf("%.f", v))
-		// 					case int:
-		// 						c.Request.Header.Add(k, fmt.Sprintf("%d", v))
+		if tokenFromRequest == "" {
+			res.Err = errors.New("Unauthorized: Please send your credential!")
+			res.ServeJSON(w, r)
+			return
+		}
 
-		// 					}
-		// 				}
-		// 			}
-		// 			return
-		// 		}
-		// 	}
-		// 	c.Output.SetStatus(401)
-		// 	c.Output.JSON(res, false, false)
-		// }
-		// return
+		if tokenFromRequest != "" {
+			jwtToken := &helper.Token{
+				Key:         config.GetJWTKey(),
+				TokenString: tokenFromRequest,
+			}
 
-		next.ServeHTTP(w, r)
+			if ok := jwtToken.IsValidToken(); !ok {
+				res.Err = errors.New("Invalid or malformed token")
+				res.ServeJSON(w, r)
+				return
+			} else {
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
+
 	})
 }

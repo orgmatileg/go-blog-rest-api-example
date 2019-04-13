@@ -1,32 +1,15 @@
-package model
+package helper
 
 import (
 	"errors"
-	"regexp"
+	"hacktiv8/final/config"
 
-	"github.com/astaxie/beego"
 	"github.com/dgrijalva/jwt-go"
-)
-
-var (
-	// JWTkey key
-	JWTkey string = "asjdkasjdkajskdjksajd"
 )
 
 // JWTPayload struct
 type JWTPayload struct {
 	*jwt.StandardClaims
-	UserID       int    `json:"user_id"`
-	UserFullName string `json:"user_fullname"`
-}
-
-var jwtSecretKey = beego.AppConfig.String("jwtsecretkey")
-var tokenValidTime = beego.AppConfig.String("tokenexpireminutes")
-
-// JWTClaims Token claims model
-type JWTClaims struct {
-	Username string
-	jwt.StandardClaims
 }
 
 // Token JWT Token Model
@@ -44,13 +27,10 @@ type TokenGenerator struct {
 // ParseJWTClaim func
 func ParseJWTClaim(tokenString string) (jwt.MapClaims, error) {
 
-	re := regexp.MustCompile("(?i)bearer\\s+")
-	refinedToken := re.ReplaceAllString(tokenString, "")
-
 	claims := jwt.MapClaims{}
 
-	_, err := jwt.ParseWithClaims(refinedToken, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(JWTkey), nil
+	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(config.GetJWTKey()), nil
 	})
 
 	if err == nil {
@@ -115,9 +95,9 @@ func JwtDecodeHelper(tokenString string) (jwt.Claims, error) {
 	return nil, err
 }
 
-func initTokenGenerator() *TokenGenerator {
+func GetJWTTokenGenerator() *TokenGenerator {
 	t := &TokenGenerator{
-		Key: jwtSecretKey,
+		Key: config.GetJWTKey(),
 		Alg: jwt.SigningMethodHS256,
 	}
 	return t
