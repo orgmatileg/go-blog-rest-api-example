@@ -40,6 +40,22 @@ func ParseJWTClaim(tokenString string) (jwt.MapClaims, error) {
 	return nil, err
 }
 
+// JwtDecodeHelper untuk membantu decode payload data jwt
+func JwtDecodeHelper(tokenString string) (jwt.Claims, error) {
+
+	claims := jwt.MapClaims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte("jwtsecretkey"), nil
+	})
+
+	if err != nil {
+		return token.Claims, nil
+	}
+
+	return nil, err
+}
+
 func parseToken(t *Token) (token *jwt.Token, err error) {
 	token, err = jwt.Parse(t.TokenString, func(jt *jwt.Token) (interface{}, error) {
 		// Untuk mencegah JWT Signing method NONE attack
@@ -79,22 +95,7 @@ func (t *Token) IsValidToken() bool {
 	return false
 }
 
-// JwtDecodeHelper untuk membantu decode payload data jwt
-func JwtDecodeHelper(tokenString string) (jwt.Claims, error) {
-
-	claims := jwt.MapClaims{}
-
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte("jwtsecretkey"), nil
-	})
-
-	if err != nil {
-		return token.Claims, nil
-	}
-
-	return nil, err
-}
-
+// GetJWTTokenGenerator
 func GetJWTTokenGenerator() *TokenGenerator {
 	t := &TokenGenerator{
 		Key: config.GetJWTKey(),

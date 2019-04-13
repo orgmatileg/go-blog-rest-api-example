@@ -15,6 +15,7 @@ func CheckAuth(next http.Handler) http.Handler {
 
 		bypassedURLs := []string{
 			"auth:POST",
+			"contact-us:POST",
 		}
 
 		// regex untuk hapus /v1/
