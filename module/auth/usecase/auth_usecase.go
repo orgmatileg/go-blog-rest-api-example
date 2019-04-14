@@ -2,10 +2,10 @@ package usecase
 
 import (
 	"errors"
-	"hacktiv8/final/helper"
-	"hacktiv8/final/module/auth"
-	modelAuth "hacktiv8/final/module/auth/model"
-	"hacktiv8/final/module/users/model"
+	"github.com/orgmatileg/go-blog-rest-api-example/helper"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/auth"
+	modelAuth "github.com/orgmatileg/go-blog-rest-api-example/module/auth/model"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/users/model"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"

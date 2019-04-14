@@ -1,11 +1,12 @@
 package main
 
 import (
-	"hacktiv8/final/config"
-	"hacktiv8/final/router"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/orgmatileg/go-blog-rest-api-example/config"
+	"github.com/orgmatileg/go-blog-rest-api-example/router"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"

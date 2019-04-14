@@ -1,6 +1,6 @@
 package contact_us
 
-import "hacktiv8/final/module/contact_us/model"
+import "github.com/orgmatileg/go-blog-rest-api-example/module/contact_us/model"
 
 type Usecase interface {
 	Save(*model.ContactUs) error

@@ -2,19 +2,31 @@ package router
 
 import (
 	"fmt"
-	"hacktiv8/final/config"
-	m "hacktiv8/final/middleware"
-	hAuth "hacktiv8/final/module/auth/delivery/http"
-	_authRepo "hacktiv8/final/module/auth/repository"
-	_authUcase "hacktiv8/final/module/auth/usecase"
-	hUser "hacktiv8/final/module/users/delivery/http"
-	_usersRepo "hacktiv8/final/module/users/repository"
-	_usersUcase "hacktiv8/final/module/users/usecase"
 
-	hContactUs "hacktiv8/final/module/contact_us/delivery/http"
-	_contactUsRepo "hacktiv8/final/module/contact_us/repository"
-	_contactUsUcase "hacktiv8/final/module/contact_us/usecase"
+	"github.com/orgmatileg/go-blog-rest-api-example/config"
+	m "github.com/orgmatileg/go-blog-rest-api-example/middleware"
+
+	// Auth
+	hAuth "github.com/orgmatileg/go-blog-rest-api-example/module/auth/delivery/http"
+	_authRepo "github.com/orgmatileg/go-blog-rest-api-example/module/auth/repository"
+	_authUcase "github.com/orgmatileg/go-blog-rest-api-example/module/auth/usecase"
+
+	// User
+	hUser "github.com/orgmatileg/go-blog-rest-api-example/module/users/delivery/http"
+	_usersRepo "github.com/orgmatileg/go-blog-rest-api-example/module/users/repository"
+	_usersUcase "github.com/orgmatileg/go-blog-rest-api-example/module/users/usecase"
+
+	// Contact Us
+	hContactUs "github.com/orgmatileg/go-blog-rest-api-example/module/contact_us/delivery/http"
+	_contactUsRepo "github.com/orgmatileg/go-blog-rest-api-example/module/contact_us/repository"
+	_contactUsUcase "github.com/orgmatileg/go-blog-rest-api-example/module/contact_us/usecase"
+
+	// Posts
 	"net/http"
+
+	hPosts "github.com/orgmatileg/go-blog-rest-api-example/module/posts/delivery/http"
+	_postsRepo "github.com/orgmatileg/go-blog-rest-api-example/module/posts/repository"
+	_postsUcase "github.com/orgmatileg/go-blog-rest-api-example/module/posts/usecase"
 
 	"github.com/gorilla/mux"
 )
@@ -57,6 +69,11 @@ func InitRouter() *mux.Router {
 	contactUsRepo := _contactUsRepo.NewContactUsRepositoryMysql(dbConn)
 	contactUsUcase := _contactUsUcase.NewContactUsUsecase(contactUsRepo)
 	hContactUs.NewContactUsHttpHandler(rv1, contactUsUcase)
+
+	// Posts
+	postsRepo := _postsRepo.NewPostsRepositoryMysql(dbConn)
+	postsUcase := _postsUcase.NewPostsUsecase(postsRepo)
+	hPosts.NewPostsHttpHandler(rv1, postsUcase)
 
 	return r
 }

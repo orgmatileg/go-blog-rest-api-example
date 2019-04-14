@@ -3,9 +3,9 @@ package http
 import (
 	"encoding/json"
 	"fmt"
-	"hacktiv8/final/helper"
-	"hacktiv8/final/module/users"
-	"hacktiv8/final/module/users/model"
+	"github.com/orgmatileg/go-blog-rest-api-example/helper"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/users"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/users/model"
 	"net/http"
 
 	"github.com/gorilla/mux"

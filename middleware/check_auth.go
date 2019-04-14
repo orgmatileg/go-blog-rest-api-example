@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"errors"
-	"hacktiv8/final/config"
-	"hacktiv8/final/helper"
+	"github.com/orgmatileg/go-blog-rest-api-example/config"
+	"github.com/orgmatileg/go-blog-rest-api-example/helper"
 	"net/http"
 	"regexp"
 	"strings"

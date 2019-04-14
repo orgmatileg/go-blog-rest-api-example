@@ -2,9 +2,9 @@ package http
 
 import (
 	"encoding/json"
-	"hacktiv8/final/helper"
-	"hacktiv8/final/module/contact_us"
-	"hacktiv8/final/module/contact_us/model"
+	"github.com/orgmatileg/go-blog-rest-api-example/helper"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/contact_us"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/contact_us/model"
 	"net/http"
 
 	"github.com/gorilla/mux"

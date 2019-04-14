@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"hacktiv8/final/module/users/model"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/users/model"
 )
 
 // Repository interface

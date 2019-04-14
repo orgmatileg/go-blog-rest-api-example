@@ -2,7 +2,7 @@ package helper
 
 import (
 	"errors"
-	"hacktiv8/final/config"
+	"github.com/orgmatileg/go-blog-rest-api-example/config"
 
 	"github.com/dgrijalva/jwt-go"
 )

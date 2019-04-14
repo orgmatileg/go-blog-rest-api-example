@@ -1,6 +1,6 @@
 package users
 
-import "hacktiv8/final/module/users/model"
+import "github.com/orgmatileg/go-blog-rest-api-example/module/users/model"
 
 type Usecase interface {
 	Save(*model.User) error

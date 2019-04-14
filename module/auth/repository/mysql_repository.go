@@ -2,8 +2,8 @@ package repository
 
 import (
 	"database/sql"
-	"hacktiv8/final/module/auth"
-	"hacktiv8/final/module/users/model"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/auth"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/users/model"
 )
 
 // mysqlAuthRepository struct

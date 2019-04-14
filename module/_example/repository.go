@@ -1,6 +1,6 @@
 package example
 
-import "hacktiv8/final/module/example/model"
+import "github.com/orgmatileg/go-blog-rest-api-example/module/example/model"
 
 // Repository interface
 type Repository interface {

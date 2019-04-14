@@ -3,8 +3,8 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"hacktiv8/final/module/contact_us"
-	"hacktiv8/final/module/contact_us/model"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/contact_us"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/contact_us/model"
 	"strconv"
 )
 
