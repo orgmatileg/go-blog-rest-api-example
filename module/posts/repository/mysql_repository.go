@@ -126,33 +126,65 @@ func (r *mysqlPostsRepository) Save(mp *model.Post) error {
 	return nil
 }
 
-// // FindByID Example
-// func (r *mysqlExampleRepository) FindByID(id string) (*model.Example, error) {
+// FindByID Example
+func (r *mysqlPostsRepository) FindByID(id string) (*model.Post, error) {
 
-// 	query := `
-// 	SELECT
-// 		created_at,
-// 		updated_at
-// 	FROM tbl_users WHERE user_id = ? && deleted_at is NULL`
+	queryPost := `
+	SELECT * 
+	FROM tbl_v_posts
+	WHERE post_id = ? and is_publish = 1`
 
-// 	var me model.Example
+	var mp model.Post
 
-// 	statement, err := r.db.Prepare(query)
+	statement, err := r.db.Prepare(queryPost)
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	if err != nil {
+		return nil, err
+	}
 
-// 	defer statement.Close()
+	defer statement.Close()
 
-// 	err = statement.QueryRow(id).Scan(&me.CreatedAt, &me.UpdatedAt)
+	err = statement.QueryRow(id).Scan(&mp.PostID, &mp.PostImage, &mp.PostSubject, &mp.PostContent, &mp.Author.AuthorID, &mp.IsPublish, &mp.CreatedAt, &mp.UpdatedAt, &mp.Author.AuthorFullName, &mp.Author.AuthorPhotoProfile)
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	if err != nil {
+		return nil, err
+	}
 
-// 	return &me, nil
-// }
+	queryTags := `
+	SELECT tag_name
+	FROM trx_posts_tags
+	WHERE post_id = ?`
+
+	statement, err = r.db.Prepare(queryTags)
+
+	if err != nil {
+		return nil, err
+	}
+
+	row, err := statement.Query(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var tags []string
+
+	for row.Next() {
+		var tag string
+
+		err = row.Scan(&tag)
+
+		if err != nil {
+			return nil, err
+		}
+
+		tags = append(tags, tag)
+	}
+
+	mp.Tags = tags
+
+	return &mp, nil
+}
 
 // // FindAll Example
 // func (r *mysqlExampleRepository) FindAll(limit, offset, order string) (model.ExampleList, error) {

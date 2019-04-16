@@ -22,16 +22,16 @@ func (u *postsUsecase) Save(mp *model.Post) (err error) {
 	return err
 }
 
-// func (u *exampleUsecase) FindByID(id string) (me *model.Example, err error) {
+func (u *postsUsecase) FindByID(id string) (me *model.Post, err error) {
 
-// 	me, err = u.exampleRepo.FindByID(id)
+	me, err = u.postsRepo.FindByID(id)
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	if err != nil {
+		return nil, err
+	}
 
-// 	return me, nil
-// }
+	return me, nil
+}
 
 // func (u *exampleUsecase) FindAll(limit, offset, order string) (lme model.ExampleList, err error) {
 

@@ -23,7 +23,7 @@ func NewPostsHttpHandler(r *mux.Router, pu posts.Usecase) {
 
 	r.HandleFunc("/posts", handler.PostsSaveHttpHandler).Methods("POST")
 	// r.HandleFunc("/example", handler.ExampleFindAllHttpHandler).Methods("GET")
-	// r.HandleFunc("/example/{id}", handler.ExampleFindByIDHttpHandler).Methods("GET")
+	r.HandleFunc("/posts/{id}", handler.PostsFindByIDHttpHandler).Methods("GET")
 	// r.HandleFunc("/example/{id}", handler.ExampleUpdateHttpHandler).Methods("PUT")
 	// r.HandleFunc("/example/{id}", handler.ExampleDeleteHttpHandler).Methods("DELETE")
 	// r.HandleFunc("/example/{id}/exists", handler.ExampleIsExistsByIDHttpHandler).Methods("GET")
@@ -58,26 +58,26 @@ func (u *HttpPostsHandler) PostsSaveHttpHandler(w http.ResponseWriter, r *http.R
 
 }
 
-// // ExampleFindByIDHttpHandler handler
-// func (u *HttpExampleHandler) ExampleFindByIDHttpHandler(w http.ResponseWriter, r *http.Request) {
+// PostsFindByIDHttpHandler handler
+func (u *HttpPostsHandler) PostsFindByIDHttpHandler(w http.ResponseWriter, r *http.Request) {
 
-// 	vars := mux.Vars(r)
-// 	res := helper.Response{}
+	vars := mux.Vars(r)
+	res := helper.Response{}
 
-// 	idP := vars["id"]
+	idP := vars["id"]
 
-// 	mu, err := u.EUsecase.FindByID(idP)
+	mu, err := u.PUsecase.FindByID(idP)
 
-// 	defer res.ServeJSON(w, r)
+	defer res.ServeJSON(w, r)
 
-// 	if err != nil {
-// 		res.Err = err
-// 		return
-// 	}
+	if err != nil {
+		res.Err = err
+		return
+	}
 
-// 	res.Body.Payload = mu
+	res.Body.Payload = mu
 
-// }
+}
 
 // // ExampleFindAllHttpHandler handler
 // func (u *HttpExampleHandler) ExampleFindAllHttpHandler(w http.ResponseWriter, r *http.Request) {
