@@ -186,15 +186,15 @@ func (r *mysqlPostsRepository) FindByID(id string) (*model.Post, error) {
 }
 
 // FindAll Example
-func (r *mysqlPostsRepository) FindAll(limit, offset, order string) (model.Posts, error) {
+func (r *mysqlPostsRepository) FindAll(limit, offset, order, isPublish string) (model.Posts, error) {
 
 	queryPost := fmt.Sprintf(`
 	SELECT *
 	FROM tbl_v_posts
-	WHERE is_publish = 1
+	WHERE is_publish = %s
 	ORDER BY created_at %s
 	LIMIT %s
-	OFFSET %s`, order, limit, offset)
+	OFFSET %s`, isPublish, order, limit, offset)
 
 	var lmp model.Posts
 

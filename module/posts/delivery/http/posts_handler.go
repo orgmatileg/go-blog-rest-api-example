@@ -91,6 +91,7 @@ func (u *HTTPPostsHandler) PostsFindAllHTTPHandler(w http.ResponseWriter, r *htt
 	limit := "10"
 	offset := "0"
 	order := "desc"
+	isPublish := "1"
 
 	if v := queryParam.Get("limit"); v != "" {
 		limit = queryParam.Get("limit")
@@ -104,9 +105,13 @@ func (u *HTTPPostsHandler) PostsFindAllHTTPHandler(w http.ResponseWriter, r *htt
 		order = queryParam.Get("order")
 	}
 
+	if v := queryParam.Get("isPublish"); v != "" {
+		isPublish = queryParam.Get("isPublish")
+	}
+
 	res := helper.Response{}
 
-	Examples, err := u.PUsecase.FindAll(limit, offset, order)
+	Examples, err := u.PUsecase.FindAll(limit, offset, order, isPublish)
 
 	defer res.ServeJSON(w, r)
 

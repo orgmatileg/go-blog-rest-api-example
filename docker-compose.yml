@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+
+  api:
+    container_name: hacktiv8-api-final
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - traefiknet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefiknet"
+      - "traefik.frontend.rule=Host:hacktiv8-blog.luqmanul.com"
+      - "traefik.port=8081"
+      - "traefik.protocol=http"
+      - "traefik.frontend.redirect.entryPoint=https"
+
+networks:
+  traefiknet:
+    driver: bridge

@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/orgmatileg/go-blog-rest-api-example/helper"
 	"github.com/orgmatileg/go-blog-rest-api-example/module/posts"
 	"github.com/orgmatileg/go-blog-rest-api-example/module/posts/model"
@@ -43,12 +45,38 @@ func (u *postsUsecase) FindByID(id string) (me *model.Post, err error) {
 	return u.postsRepo.FindByID(id)
 }
 
-func (u *postsUsecase) FindAll(limit, offset, order string) (lmp model.Posts, err error) {
+func (u *postsUsecase) FindAll(limit, offset, order, isPublish string) (lmp model.Posts, err error) {
 
-	return u.postsRepo.FindAll(limit, offset, order)
+	return u.postsRepo.FindAll(limit, offset, order, isPublish)
 }
 
 func (u *postsUsecase) Update(id string, mp *model.Post) (rowAffected *string, err error) {
+
+	fmt.Println(id)
+
+	v, err := u.FindByID(id)
+
+	fmt.Println(err)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if mp.PostImage != "" {
+		imgBB := helper.NewImgBBConn()
+		imgURL, err := imgBB.Upload(mp.PostImage)
+
+		if err != nil {
+			return nil, err
+		}
+
+		v.PostImage = imgURL
+	}
+
+	v.PostSubject = mp.PostSubject
+	v.PostContent = mp.PostContent
+	v.IsPublish = mp.IsPublish
+	v.Author = mp.Author
 
 	rowAffected, err = u.postsRepo.Update(id, mp)
 
