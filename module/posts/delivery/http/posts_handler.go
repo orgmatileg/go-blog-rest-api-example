@@ -27,9 +27,9 @@ func NewPostsHTTPHandler(r *mux.Router, pu posts.Usecase) {
 	r.HandleFunc("/posts", handler.PostsSaveHTTPHandler).Methods("POST")
 	r.HandleFunc("/posts", handler.PostsFindAllHTTPHandler).Methods("GET")
 	r.HandleFunc("/posts/{id}", handler.PostsFindByIDHTTPHandler).Methods("GET")
-	// r.HandleFunc("/example/{id}", handler.ExampleUpdateHttpHandler).Methods("PUT")
-	// r.HandleFunc("/example/{id}", handler.ExampleDeleteHttpHandler).Methods("DELETE")
-	// r.HandleFunc("/example/{id}/exists", handler.ExampleIsExistsByIDHttpHandler).Methods("GET")
+	r.HandleFunc("/posts/{id}", handler.PostsUpdateHTTPHandler).Methods("PUT")
+	r.HandleFunc("/posts/{id}", handler.PostsDeleteHTTPHandler).Methods("DELETE")
+	r.HandleFunc("/posts/{id}/exists", handler.PostsIsExistsByIDHTTPHandler).Methods("GET")
 }
 
 // PostsSaveHTTPHandler handler
@@ -119,8 +119,8 @@ func (u *HTTPPostsHandler) PostsFindAllHTTPHandler(w http.ResponseWriter, r *htt
 
 }
 
-// ExampleUpdateHttpHandler handler
-func (u *HTTPPostsHandler) ExampleUpdateHttpHandler(w http.ResponseWriter, r *http.Request) {
+// PostsUpdateHTTPHandler handler
+func (u *HTTPPostsHandler) PostsUpdateHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	res := helper.Response{}
@@ -129,9 +129,9 @@ func (u *HTTPPostsHandler) ExampleUpdateHttpHandler(w http.ResponseWriter, r *ht
 
 	decoder := json.NewDecoder(r.Body)
 
-	var me model.Example
+	var mp model.Post
 
-	err := decoder.Decode(&me)
+	err := decoder.Decode(&mp)
 
 	defer res.ServeJSON(w, r)
 
@@ -140,7 +140,7 @@ func (u *HTTPPostsHandler) ExampleUpdateHttpHandler(w http.ResponseWriter, r *ht
 		return
 	}
 
-	rowsAffected, err := u.EUsecase.Update(idP, &me)
+	rowsAffected, err := u.PUsecase.Update(idP, &mp)
 
 	if err != nil {
 		res.Err = err
@@ -153,49 +153,49 @@ func (u *HTTPPostsHandler) ExampleUpdateHttpHandler(w http.ResponseWriter, r *ht
 
 }
 
-// // ExampleDeleteHttpHandler handler
-// func (u *HttpExampleHandler) ExampleDeleteHttpHandler(w http.ResponseWriter, r *http.Request) {
+// PostsDeleteHTTPHandler handler
+func (u *HTTPPostsHandler) PostsDeleteHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
-// 	vars := mux.Vars(r)
+	vars := mux.Vars(r)
 
-// 	idP := vars["id"]
+	idP := vars["id"]
 
-// 	res := helper.Response{}
+	res := helper.Response{}
 
-// 	err := u.EUsecase.Delete(idP)
+	err := u.PUsecase.Delete(idP)
 
-// 	defer res.ServeJSON(w, r)
+	defer res.ServeJSON(w, r)
 
-// 	if err != nil {
-// 		res.Err = err
-// 		return
-// 	}
+	if err != nil {
+		res.Err = err
+		return
+	}
 
-// 	res.Body.Payload = "OK"
+	res.Body.Payload = "OK"
 
-// }
+}
 
-// // ExampleIsExistsByIDHttpHandler handler
-// func (u *HttpExampleHandler) ExampleIsExistsByIDHttpHandler(w http.ResponseWriter, r *http.Request) {
+// PostsIsExistsByIDHTTPHandler handler
+func (u *HTTPPostsHandler) PostsIsExistsByIDHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
-// 	vars := mux.Vars(r)
-// 	res := helper.Response{}
+	vars := mux.Vars(r)
+	res := helper.Response{}
 
-// 	idP := vars["id"]
+	idP := vars["id"]
 
-// 	isExists, err := u.EUsecase.IsExistsByID(idP)
+	isExists, err := u.PUsecase.IsExistsByID(idP)
 
-// 	defer res.ServeJSON(w, r)
+	defer res.ServeJSON(w, r)
 
-// 	if err != nil {
-// 		res.Err = err
-// 		return
-// 	}
+	if err != nil {
+		res.Err = err
+		return
+	}
 
-// 	if isExists {
-// 		res.Body.Payload = "ID Example " + idP + " is Exists!"
-// 	} else {
-// 		res.Body.Payload = "ID Example " + idP + " is Not Exists!"
-// 	}
+	if isExists {
+		res.Body.Payload = "ID Posts " + idP + " is Exists!"
+	} else {
+		res.Body.Payload = "ID Posts " + idP + " is Not Exists!"
+	}
 
-// }
+}

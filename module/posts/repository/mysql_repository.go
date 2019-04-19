@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/orgmatileg/go-blog-rest-api-example/module/posts"
 	"github.com/orgmatileg/go-blog-rest-api-example/module/posts/model"
@@ -39,14 +40,12 @@ func (r *mysqlPostsRepository) Save(mp *model.Post) error {
 	tx, err := r.db.Begin()
 
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
 	statement, err := tx.Prepare(queryPost)
 
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -108,7 +107,7 @@ func (r *mysqlPostsRepository) Save(mp *model.Post) error {
 			return err
 		}
 
-		var iTags []interface{}
+		iTags := make([]interface{}, len(mp.Tags))
 		for i, tag := range mp.Tags {
 			iTags[i] = tag
 		}
@@ -256,9 +255,9 @@ func (r *mysqlPostsRepository) FindAll(limit, offset, order string) (model.Posts
 }
 
 // Update Example
-func (r *mysqlPostsRepository) Update(id string, u *model.Post) (rowAffected *string, err error) {
+func (r *mysqlPostsRepository) Update(id string, mp *model.Post) (rowAffected *string, err error) {
 
-	query := `
+	queryPost := `
 	UPDATE tbl_posts
 	SET
 		post_featured_image = ?,
@@ -266,9 +265,9 @@ func (r *mysqlPostsRepository) Update(id string, u *model.Post) (rowAffected *st
 		post_content = ?,
 		is_publish = ?,
 		updated_at = ?
-	WHERE user_id=?`
+	WHERE post_id = ?`
 
-	statement, err := r.db.Prepare(query)
+	statement, err := r.db.Prepare(queryPost)
 
 	if err != nil {
 		return nil, err
@@ -276,7 +275,7 @@ func (r *mysqlPostsRepository) Update(id string, u *model.Post) (rowAffected *st
 
 	defer statement.Close()
 
-	result, err := statement.Exec(u.CreatedAt, u.UpdatedAt, id)
+	result, err := statement.Exec(mp.PostImage, mp.PostSubject, mp.PostContent, mp.IsPublish, time.Now(), id)
 
 	if err != nil {
 		return nil, err
@@ -296,49 +295,48 @@ func (r *mysqlPostsRepository) Update(id string, u *model.Post) (rowAffected *st
 
 }
 
-// // Delete Example
-// func (r *mysqlExampleRepository) Delete(id string) error {
+// Delete Example
+func (r *mysqlPostsRepository) Delete(id string) error {
 
-// 	query := `
-// 	UPDATE tbl_users
-// 	SET	deleted_at = ?
-// 	WHERE user_id = ?`
+	query := `
+	DELETE FROM tbl_posts
+	WHERE post_id = ?`
 
-// 	statement, err := r.db.Prepare(query)
+	statement, err := r.db.Prepare(query)
 
-// 	if err != nil {
-// 		return err
-// 	}
+	if err != nil {
+		return err
+	}
 
-// 	defer statement.Close()
+	defer statement.Close()
 
-// 	_, err = statement.Exec(time.Now(), id)
+	_, err = statement.Exec(id)
 
-// 	if err != nil {
-// 		return err
-// 	}
+	if err != nil {
+		return err
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
-// // IsExistsByID Example
-// func (r *mysqlExampleRepository) IsExistsByID(id string) (isExist bool, err error) {
+// IsExistsByID Example
+func (r *mysqlPostsRepository) IsExistsByID(id string) (isExist bool, err error) {
 
-// 	query := "SELECT EXISTS(SELECT TRUE from example WHERE example_id = ?)"
+	query := "SELECT EXISTS(SELECT TRUE from tbl_posts WHERE post_id = ?)"
 
-// 	statement, err := r.db.Prepare(query)
+	statement, err := r.db.Prepare(query)
 
-// 	if err != nil {
-// 		return false, err
-// 	}
+	if err != nil {
+		return false, err
+	}
 
-// 	defer statement.Close()
+	defer statement.Close()
 
-// 	err = statement.QueryRow(id).Scan(&isExist)
+	err = statement.QueryRow(id).Scan(&isExist)
 
-// 	if err != nil {
-// 		return false, err
-// 	}
+	if err != nil {
+		return false, err
+	}
 
-// 	return isExist, nil
-// }
+	return isExist, nil
+}
