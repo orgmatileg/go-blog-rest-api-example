@@ -11,26 +11,28 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type HttpPostsHandler struct {
+// HTTPPostsHandler struct
+type HTTPPostsHandler struct {
 	PUsecase posts.Usecase
 }
 
-func NewPostsHttpHandler(r *mux.Router, pu posts.Usecase) {
+// NewPostsHTTPHandler func
+func NewPostsHTTPHandler(r *mux.Router, pu posts.Usecase) {
 
-	handler := HttpPostsHandler{
+	handler := HTTPPostsHandler{
 		PUsecase: pu,
 	}
 
-	r.HandleFunc("/posts", handler.PostsSaveHttpHandler).Methods("POST")
-	// r.HandleFunc("/example", handler.ExampleFindAllHttpHandler).Methods("GET")
-	r.HandleFunc("/posts/{id}", handler.PostsFindByIDHttpHandler).Methods("GET")
+	r.HandleFunc("/posts", handler.PostsSaveHTTPHandler).Methods("POST")
+	r.HandleFunc("/posts", handler.PostsFindAllHTTPHandler).Methods("GET")
+	r.HandleFunc("/posts/{id}", handler.PostsFindByIDHTTPHandler).Methods("GET")
 	// r.HandleFunc("/example/{id}", handler.ExampleUpdateHttpHandler).Methods("PUT")
 	// r.HandleFunc("/example/{id}", handler.ExampleDeleteHttpHandler).Methods("DELETE")
 	// r.HandleFunc("/example/{id}/exists", handler.ExampleIsExistsByIDHttpHandler).Methods("GET")
 }
 
-// PostsSaveHttpHandler handler
-func (u *HttpPostsHandler) PostsSaveHttpHandler(w http.ResponseWriter, r *http.Request) {
+// PostsSaveHTTPHandler handler
+func (u *HTTPPostsHandler) PostsSaveHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -58,8 +60,8 @@ func (u *HttpPostsHandler) PostsSaveHttpHandler(w http.ResponseWriter, r *http.R
 
 }
 
-// PostsFindByIDHttpHandler handler
-func (u *HttpPostsHandler) PostsFindByIDHttpHandler(w http.ResponseWriter, r *http.Request) {
+// PostsFindByIDHTTPHandler handler
+func (u *HTTPPostsHandler) PostsFindByIDHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	res := helper.Response{}
@@ -79,42 +81,42 @@ func (u *HttpPostsHandler) PostsFindByIDHttpHandler(w http.ResponseWriter, r *ht
 
 }
 
-// // ExampleFindAllHttpHandler handler
-// func (u *HttpExampleHandler) ExampleFindAllHttpHandler(w http.ResponseWriter, r *http.Request) {
+// PostsFindAllHTTPHandler handler
+func (u *HTTPPostsHandler) PostsFindAllHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
-// 	queryParam := r.URL.Query()
+	queryParam := r.URL.Query()
 
-// 	// Set default query
-// 	limit := "10"
-// 	offset := "0"
-// 	order := "desc"
+	// Set default query
+	limit := "10"
+	offset := "0"
+	order := "desc"
 
-// 	if v := queryParam.Get("limit"); v != "" {
-// 		limit = queryParam.Get("limit")
-// 	}
+	if v := queryParam.Get("limit"); v != "" {
+		limit = queryParam.Get("limit")
+	}
 
-// 	if v := queryParam.Get("offset"); v != "" {
-// 		offset = queryParam.Get("offset")
-// 	}
+	if v := queryParam.Get("offset"); v != "" {
+		offset = queryParam.Get("offset")
+	}
 
-// 	if v := queryParam.Get("order"); v != "" {
-// 		order = queryParam.Get("order")
-// 	}
+	if v := queryParam.Get("order"); v != "" {
+		order = queryParam.Get("order")
+	}
 
-// 	res := helper.Response{}
+	res := helper.Response{}
 
-// 	Examples, err := u.EUsecase.FindAll(limit, offset, order)
+	Examples, err := u.PUsecase.FindAll(limit, offset, order)
 
-// 	defer res.ServeJSON(w, r)
+	defer res.ServeJSON(w, r)
 
-// 	if err != nil {
-// 		res.Err = err
-// 		return
-// 	}
+	if err != nil {
+		res.Err = err
+		return
+	}
 
-// 	res.Body.Payload = Examples
+	res.Body.Payload = Examples
 
-// }
+}
 
 // // ExampleUpdateHttpHandler handler
 // func (u *HttpExampleHandler) ExampleUpdateHttpHandler(w http.ResponseWriter, r *http.Request) {

@@ -17,28 +17,18 @@ func NewPostsUsecase(pr posts.Repository) posts.Usecase {
 
 func (u *postsUsecase) Save(mp *model.Post) (err error) {
 
-	err = u.postsRepo.Save(mp)
-
-	return err
+	return u.postsRepo.Save(mp)
 }
 
 func (u *postsUsecase) FindByID(id string) (me *model.Post, err error) {
 
-	me, err = u.postsRepo.FindByID(id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return me, nil
+	return u.postsRepo.FindByID(id)
 }
 
-// func (u *exampleUsecase) FindAll(limit, offset, order string) (lme model.ExampleList, err error) {
+func (u *postsUsecase) FindAll(limit, offset, order string) (lmp model.Posts, err error) {
 
-// 	lme, err = u.exampleRepo.FindAll(limit, offset, order)
-
-// 	return lme, err
-// }
+	return u.postsRepo.FindAll(limit, offset, order)
+}
 
 // func (u *exampleUsecase) Update(id string, me *model.Example) (rowAffected *string, err error) {
 

@@ -15,7 +15,7 @@ type mysqlPostsRepository struct {
 	db *sql.DB
 }
 
-// NewPostsRepositoryMysql
+// NewPostsRepositoryMysql struct
 func NewPostsRepositoryMysql(db *sql.DB) posts.Repository {
 	return &mysqlPostsRepository{db}
 }
@@ -59,15 +59,15 @@ func (r *mysqlPostsRepository) Save(mp *model.Post) error {
 		return err
 	}
 
-	lastInsertIdInt64, err := result.LastInsertId()
+	lastInsertIDInt64, err := result.LastInsertId()
 
 	if err != nil {
 		return err
 	}
 
-	lastInsertIdStr := strconv.FormatInt(lastInsertIdInt64, 10)
+	lastInsertIDStr := strconv.FormatInt(lastInsertIDInt64, 10)
 
-	mp.PostID = lastInsertIdStr
+	mp.PostID = lastInsertIDStr
 
 	// Tags
 	var queryTags string
@@ -86,7 +86,7 @@ func (r *mysqlPostsRepository) Save(mp *model.Post) error {
 			return err
 		}
 
-		_, err = statement.Exec(lastInsertIdInt64, "No Tag")
+		_, err = statement.Exec(lastInsertIDInt64, "No Tag")
 
 		if err != nil {
 			tx.Rollback()
@@ -99,7 +99,7 @@ func (r *mysqlPostsRepository) Save(mp *model.Post) error {
 		VALUES
 		`
 
-		valuesTags := strings.Repeat(fmt.Sprintf(",(%d,?)", lastInsertIdInt64), len(mp.Tags))
+		valuesTags := strings.Repeat(fmt.Sprintf(",(%d,?)", lastInsertIDInt64), len(mp.Tags))
 
 		statement, err = tx.Prepare(queryTags + valuesTags[1:])
 
@@ -108,7 +108,7 @@ func (r *mysqlPostsRepository) Save(mp *model.Post) error {
 			return err
 		}
 
-		var iTags []interface{} = make([]interface{}, len(mp.Tags))
+		var iTags []interface{}
 		for i, tag := range mp.Tags {
 			iTags[i] = tag
 		}
@@ -186,77 +186,115 @@ func (r *mysqlPostsRepository) FindByID(id string) (*model.Post, error) {
 	return &mp, nil
 }
 
-// // FindAll Example
-// func (r *mysqlExampleRepository) FindAll(limit, offset, order string) (model.ExampleList, error) {
+// FindAll Example
+func (r *mysqlPostsRepository) FindAll(limit, offset, order string) (model.Posts, error) {
 
-// 	query := fmt.Sprintf(`
-// 	SELECT *
-// 	FROM tbl_example
-// 	ORDER BY created_at %s
-// 	LIMIT %s
-// 	OFFSET %s`, order, limit, offset)
+	queryPost := fmt.Sprintf(`
+	SELECT *
+	FROM tbl_v_posts
+	WHERE is_publish = 1
+	ORDER BY created_at %s
+	LIMIT %s
+	OFFSET %s`, order, limit, offset)
 
-// 	var mel model.ExampleList
+	var lmp model.Posts
 
-// 	rows, err := r.db.Query(query)
+	rows, err := r.db.Query(queryPost)
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	if err != nil {
+		return nil, err
+	}
 
-// 	defer rows.Close()
+	defer rows.Close()
 
-// 	for rows.Next() {
-// 		var me model.Example
+	for rows.Next() {
+		var mp model.Post
 
-// 		err = rows.Scan(&me.CreatedAt, &me.UpdatedAt)
+		err = rows.Scan(&mp.PostID, &mp.PostImage, &mp.PostSubject, &mp.PostContent, &mp.Author.AuthorID, &mp.IsPublish, &mp.CreatedAt, &mp.UpdatedAt, &mp.Author.AuthorFullName, &mp.Author.AuthorPhotoProfile)
 
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		mel = append(mel, me)
-// 	}
+		if err != nil {
+			return nil, err
+		}
 
-// 	return mel, nil
-// }
+		queryTags := `
+		SELECT tag_name
+		FROM trx_posts_tags
+		WHERE post_id = ?`
 
-// // Update Example
-// func (r *mysqlExampleRepository) Update(id string, u *model.Example) (rowAffected *string, err error) {
+		statement, err := r.db.Prepare(queryTags)
 
-// 	query := `
-// 	UPDATE tbl_example
-// 	SET
-// 		username=?,
-// 		email=?,
-// 	WHERE user_id=?`
+		if err != nil {
+			return nil, err
+		}
 
-// 	statement, err := r.db.Prepare(query)
+		row, err := statement.Query(mp.PostID)
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+		if err != nil {
+			return nil, err
+		}
 
-// 	defer statement.Close()
+		var tags []string
 
-// 	result, err := statement.Exec(u.CreatedAt, u.UpdatedAt, id)
+		for row.Next() {
+			var tag string
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+			err = row.Scan(&tag)
 
-// 	rowsAffectedInt64, err := result.RowsAffected()
+			if err != nil {
+				return nil, err
+			}
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+			tags = append(tags, tag)
+		}
 
-// 	rowsAffectedStr := strconv.FormatInt(rowsAffectedInt64, 10)
+		mp.Tags = tags
 
-// 	rowAffected = &rowsAffectedStr
+		lmp = append(lmp, mp)
+	}
 
-// 	return rowAffected, nil
+	return lmp, nil
+}
 
-// }
+// Update Example
+func (r *mysqlPostsRepository) Update(id string, u *model.Post) (rowAffected *string, err error) {
+
+	query := `
+	UPDATE tbl_posts
+	SET
+		post_featured_image = ?,
+		post_subject = ?,
+		post_content = ?,
+		is_publish = ?,
+		updated_at = ?
+	WHERE user_id=?`
+
+	statement, err := r.db.Prepare(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer statement.Close()
+
+	result, err := statement.Exec(u.CreatedAt, u.UpdatedAt, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffectedInt64, err := result.RowsAffected()
+
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffectedStr := strconv.FormatInt(rowsAffectedInt64, 10)
+
+	rowAffected = &rowsAffectedStr
+
+	return rowAffected, nil
+
+}
 
 // // Delete Example
 // func (r *mysqlExampleRepository) Delete(id string) error {

@@ -11,7 +11,7 @@ type Post struct {
 	PostContent string    `json:"post_content"`
 	Author      Author    `json:"author"`
 	Tags        []string  `json:"tags"`
-	IsPublish   int       `json:"isPublish"`
+	IsPublish   int       `json:"is_publish"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }

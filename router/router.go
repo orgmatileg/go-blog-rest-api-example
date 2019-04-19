@@ -73,7 +73,7 @@ func InitRouter() *mux.Router {
 	// Posts
 	postsRepo := _postsRepo.NewPostsRepositoryMysql(dbConn)
 	postsUcase := _postsUcase.NewPostsUsecase(postsRepo)
-	hPosts.NewPostsHttpHandler(rv1, postsUcase)
+	hPosts.NewPostsHTTPHandler(rv1, postsUcase)
 
 	return r
 }
