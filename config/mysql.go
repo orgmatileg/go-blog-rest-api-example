@@ -34,7 +34,7 @@ func createConnectionMySQL(desc string) *sql.DB {
 
 	val := url.Values{}
 	val.Add("parseTime", "1")
-	val.Add("loc", "Asia/Jakarta")
+	// val.Add("loc", "Asia/Jakarta")
 	dsn := fmt.Sprintf("%s?%s", desc, val.Encode())
 	db, err := sql.Open(`mysql`, dsn)
 	if err != nil {
