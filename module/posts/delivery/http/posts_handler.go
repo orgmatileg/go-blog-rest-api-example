@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/orgmatileg/go-blog-rest-api-example/helper"
@@ -118,39 +119,39 @@ func (u *HTTPPostsHandler) PostsFindAllHTTPHandler(w http.ResponseWriter, r *htt
 
 }
 
-// // ExampleUpdateHttpHandler handler
-// func (u *HttpExampleHandler) ExampleUpdateHttpHandler(w http.ResponseWriter, r *http.Request) {
+// ExampleUpdateHttpHandler handler
+func (u *HTTPPostsHandler) ExampleUpdateHttpHandler(w http.ResponseWriter, r *http.Request) {
 
-// 	vars := mux.Vars(r)
-// 	res := helper.Response{}
+	vars := mux.Vars(r)
+	res := helper.Response{}
 
-// 	idP := vars["id"]
+	idP := vars["id"]
 
-// 	decoder := json.NewDecoder(r.Body)
+	decoder := json.NewDecoder(r.Body)
 
-// 	var me model.Example
+	var me model.Example
 
-// 	err := decoder.Decode(&me)
+	err := decoder.Decode(&me)
 
-// 	defer res.ServeJSON(w, r)
+	defer res.ServeJSON(w, r)
 
-// 	if err != nil {
-// 		res.Err = err
-// 		return
-// 	}
+	if err != nil {
+		res.Err = err
+		return
+	}
 
-// 	rowsAffected, err := u.EUsecase.Update(idP, &me)
+	rowsAffected, err := u.EUsecase.Update(idP, &me)
 
-// 	if err != nil {
-// 		res.Err = err
-// 		return
-// 	}
+	if err != nil {
+		res.Err = err
+		return
+	}
 
-// 	fmt.Println(rowsAffected, err)
+	fmt.Println(rowsAffected, err)
 
-// 	res.Body.Payload = fmt.Sprintf("Total rows affected: %s", *rowsAffected)
+	res.Body.Payload = fmt.Sprintf("Total rows affected: %s", *rowsAffected)
 
-// }
+}
 
 // // ExampleDeleteHttpHandler handler
 // func (u *HttpExampleHandler) ExampleDeleteHttpHandler(w http.ResponseWriter, r *http.Request) {
