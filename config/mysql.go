@@ -38,7 +38,8 @@ func createConnectionMySQL(desc string) *sql.DB {
 	dsn := fmt.Sprintf("%s?%s", desc, val.Encode())
 	db, err := sql.Open(`mysql`, dsn)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
+		os.Exit(1)
 	}
 	err = db.Ping()
 	if err != nil {
