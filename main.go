@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/handlers"
 	"github.com/orgmatileg/go-blog-rest-api-example/config"
 	"github.com/orgmatileg/go-blog-rest-api-example/router"
 
@@ -26,9 +27,12 @@ func init() {
 }
 
 func main() {
+	originCORS := handlers.AllowedOrigins([]string{"*"})
+	headersCORS := handlers.AllowedHeaders([]string{"X-Requested-With", "Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"})
+	methodCORS := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"})
 
 	router := router.InitRouter()
 
-	log.Fatal(http.ListenAndServe(":8081", router))
+	log.Fatal(http.ListenAndServe(":8081", handlers.CORS(originCORS, headersCORS, methodCORS)(router)))
 
 }

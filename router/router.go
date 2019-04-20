@@ -50,7 +50,6 @@ func InitRouter() *mux.Router {
 
 	// Middleware
 	rv1.Use(m.CheckAuth)
-	rv1.Use(m.CORS)
 
 	// Get DB Conn
 	dbConn := config.GetMySQLDB()
