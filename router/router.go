@@ -3,6 +3,8 @@ package router
 import (
 	"fmt"
 
+	"net/http"
+
 	"github.com/orgmatileg/go-blog-rest-api-example/config"
 	m "github.com/orgmatileg/go-blog-rest-api-example/middleware"
 
@@ -22,11 +24,19 @@ import (
 	_contactUsUcase "github.com/orgmatileg/go-blog-rest-api-example/module/contact_us/usecase"
 
 	// Posts
-	"net/http"
-
 	hPosts "github.com/orgmatileg/go-blog-rest-api-example/module/posts/delivery/http"
 	_postsRepo "github.com/orgmatileg/go-blog-rest-api-example/module/posts/repository"
 	_postsUcase "github.com/orgmatileg/go-blog-rest-api-example/module/posts/usecase"
+
+	// Tags
+	hTags "github.com/orgmatileg/go-blog-rest-api-example/module/tags/delivery/http"
+	_tagsRepo "github.com/orgmatileg/go-blog-rest-api-example/module/tags/repository"
+	_tagsUcase "github.com/orgmatileg/go-blog-rest-api-example/module/tags/usecase"
+
+	// Tags
+	hSubscribe "github.com/orgmatileg/go-blog-rest-api-example/module/subscribe/delivery/http"
+	_subscribeRepo "github.com/orgmatileg/go-blog-rest-api-example/module/subscribe/repository"
+	_subscribeUcase "github.com/orgmatileg/go-blog-rest-api-example/module/subscribe/usecase"
 
 	"github.com/gorilla/mux"
 )
@@ -73,6 +83,16 @@ func InitRouter() *mux.Router {
 	postsRepo := _postsRepo.NewPostsRepositoryMysql(dbConn)
 	postsUcase := _postsUcase.NewPostsUsecase(postsRepo)
 	hPosts.NewPostsHTTPHandler(rv1, postsUcase)
+
+	// Tags
+	tagsRepo := _tagsRepo.NewTagsRepositoryMysql(dbConn)
+	tagsUcase := _tagsUcase.NewTagsUsecase(tagsRepo)
+	hTags.NewTagsHTTPHandler(rv1, tagsUcase)
+
+	// Tags
+	subscribeRepo := _subscribeRepo.NewSubscribeRepositoryMysql(dbConn)
+	subscribeUcase := _subscribeUcase.NewSubscribeUsecase(subscribeRepo)
+	hSubscribe.NewSubscribeHTTPHandler(rv1, subscribeUcase)
 
 	return r
 }
