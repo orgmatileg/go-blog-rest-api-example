@@ -7,4 +7,5 @@ type Repository interface {
 	Save(*model.Tag) error
 	FindAll(limit, offset string) (model.Tags, error)
 	Delete(tagName string) error
+	Count() (int64, error)
 }

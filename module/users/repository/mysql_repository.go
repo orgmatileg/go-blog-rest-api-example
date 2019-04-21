@@ -3,10 +3,11 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"github.com/orgmatileg/go-blog-rest-api-example/module/users"
-	"github.com/orgmatileg/go-blog-rest-api-example/module/users/model"
 	"strconv"
 	"time"
+
+	"github.com/orgmatileg/go-blog-rest-api-example/module/users"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/users/model"
 )
 
 // mysqlUsersRepository struct
@@ -227,4 +228,29 @@ func (r *mysqlUsersRepository) IsExistsByID(idUser string) (isExist bool, err er
 	}
 
 	return isExist, nil
+}
+
+// Count Posts
+func (r *mysqlUsersRepository) Count() (count int64, err error) {
+
+	query := `
+	SELECT COUNT(*)
+	FROM tbl_users
+	`
+
+	statement, err := r.db.Prepare(query)
+
+	if err != nil {
+		return -1, err
+	}
+
+	defer statement.Close()
+
+	err = statement.QueryRow().Scan(&count)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return count, nil
 }

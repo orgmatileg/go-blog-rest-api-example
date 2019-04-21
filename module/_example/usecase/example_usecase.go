@@ -16,61 +16,29 @@ func NewExampleUsecase(er example.Repository) example.Usecase {
 }
 
 func (u *exampleUsecase) Save(me *model.Example) (err error) {
-
-	err = u.exampleRepo.Save(me)
-
-	return err
+	return u.exampleRepo.Save(me)
 }
 
 func (u *exampleUsecase) FindByID(id string) (me *model.Example, err error) {
-
-	me, err = u.exampleRepo.FindByID(id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return me, nil
+	return u.exampleRepo.FindByID(id)
 }
 
 func (u *exampleUsecase) FindAll(limit, offset, order string) (lme model.ExampleList, err error) {
-
-	lme, err = u.exampleRepo.FindAll(limit, offset, order)
-
-	return lme, err
+	return u.exampleRepo.FindAll(limit, offset, order)
 }
 
 func (u *exampleUsecase) Update(id string, me *model.Example) (rowAffected *string, err error) {
-
-	// v, err := u.exampleRepo.FindByID(id)
-
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	rowAffected, err = u.exampleRepo.Update(id, me)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return rowAffected, err
+	return u.exampleRepo.Update(id, me)
 }
 
 func (u *exampleUsecase) Delete(idUser string) (err error) {
-
-	err = u.exampleRepo.Delete(idUser)
-
-	return err
+	return u.exampleRepo.Delete(idUser)
 }
 
 func (u *exampleUsecase) IsExistsByID(idUser string) (isExist bool, err error) {
+	return u.exampleRepo.IsExistsByID(idUser)
+}
 
-	isExist, err = u.exampleRepo.IsExistsByID(idUser)
-
-	if err != nil {
-		return false, err
-	}
-
-	return isExist, nil
+func (u *exampleUsecase) Count() (count int64, err error) {
+	return u.exampleRepo.Count()
 }

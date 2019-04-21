@@ -62,16 +62,26 @@ func (u *usersUsercase) FindByID(idUser string) (mu *model.User, err error) {
 	return mu, nil
 }
 
-func (u *usersUsercase) FindAll(limit, offset, order string) (lmu model.Users, err error) {
+func (u *usersUsercase) FindAll(limit, offset, order string) (mul model.Users, count int64, err error) {
 
-	lmu, err = u.usersRepo.FindAll(limit, offset, order)
+	mul, err = u.usersRepo.FindAll(limit, offset, order)
+
+	if err != nil {
+		return nil, -1, err
+	}
+
+	count, err = u.usersRepo.Count()
+
+	if err != nil {
+		return nil, -1, err
+	}
 
 	// Clean password, so password not exposed to public
-	for _, v := range lmu {
+	for _, v := range mul {
 		v.Password = ""
 	}
 
-	return lmu, err
+	return
 }
 
 func (u *usersUsercase) Update(idUser string, mu *model.User) (rowAffected *string, err error) {
@@ -129,12 +139,9 @@ func (u *usersUsercase) Delete(idUser string) (err error) {
 }
 
 func (u *usersUsercase) IsExistsByID(idUser string) (isExist bool, err error) {
+	return u.usersRepo.IsExistsByID(idUser)
+}
 
-	isExist, err = u.usersRepo.IsExistsByID(idUser)
-
-	if err != nil {
-		return false, err
-	}
-
-	return isExist, nil
+func (u *usersUsercase) Count() (count int64, err error) {
+	return u.usersRepo.Count()
 }

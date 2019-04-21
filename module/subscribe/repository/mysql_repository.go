@@ -116,3 +116,28 @@ func (r *mysqlSubscribeRepository) FindAll(limit, offset, order string) (model.S
 
 	return msl, nil
 }
+
+// Count Posts
+func (r *mysqlSubscribeRepository) Count() (count int64, err error) {
+
+	query := `
+	SELECT COUNT(*)
+	FROM tbl_subscribe
+	`
+
+	statement, err := r.db.Prepare(query)
+
+	if err != nil {
+		return -1, err
+	}
+
+	defer statement.Close()
+
+	err = statement.QueryRow().Scan(&count)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return count, nil
+}

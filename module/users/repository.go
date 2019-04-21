@@ -10,4 +10,5 @@ type Repository interface {
 	Update(id string, modelUser *model.User) (*string, error)
 	Delete(id string) error
 	IsExistsByID(id string) (bool, error)
+	Count() (int64, error)
 }

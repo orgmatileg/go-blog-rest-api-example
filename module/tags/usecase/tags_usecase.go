@@ -17,22 +17,23 @@ func NewTagsUsecase(tr tags.Repository) tags.Usecase {
 }
 
 func (u *tagsUsecase) Save(mt *model.Tag) (err error) {
-
-	err = u.tagsRepo.Save(mt)
-
-	return err
+	return u.tagsRepo.Save(mt)
 }
 
-func (u *tagsUsecase) FindAll(limit, offset string) (lmt model.Tags, err error) {
+func (u *tagsUsecase) FindAll(limit, offset string) (mtl model.Tags, count int64, err error) {
+	mtl, err = u.tagsRepo.FindAll(limit, offset)
+	if err != nil {
+		return nil, -1, nil
+	}
 
-	lmt, err = u.tagsRepo.FindAll(limit, offset)
-
-	return lmt, err
+	count, err = u.tagsRepo.Count()
+	return
 }
 
 func (u *tagsUsecase) Delete(tagName string) (err error) {
+	return u.tagsRepo.Delete(tagName)
+}
 
-	err = u.tagsRepo.Delete(tagName)
-
-	return err
+func (u *tagsUsecase) Count() (count int64, err error) {
+	return u.tagsRepo.Count()
 }

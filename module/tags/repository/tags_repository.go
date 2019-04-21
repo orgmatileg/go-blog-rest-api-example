@@ -103,3 +103,28 @@ func (r *mysqlTagsRepository) Delete(tagName string) error {
 
 	return nil
 }
+
+// Count Posts
+func (r *mysqlTagsRepository) Count() (count int64, err error) {
+
+	query := `
+	SELECT COUNT(DISTINCT tag_name)
+	FROM trx_posts_tags
+	`
+
+	statement, err := r.db.Prepare(query)
+
+	if err != nil {
+		return -1, err
+	}
+
+	defer statement.Close()
+
+	err = statement.QueryRow().Scan(&count)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return count, nil
+}

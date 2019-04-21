@@ -23,6 +23,18 @@ func (u *subscribeUsecase) FindByID(id string) (ms *model.Subscribe, err error) 
 	return u.subscribeRepo.FindByID(id)
 }
 
-func (u *subscribeUsecase) FindAll(limit, offset, order string) (msl model.SubscribeList, err error) {
-	return u.subscribeRepo.FindAll(limit, offset, order)
+func (u *subscribeUsecase) FindAll(limit, offset, order string) (msl model.SubscribeList, count int64, err error) {
+	msl, err = u.subscribeRepo.FindAll(limit, offset, order)
+
+	if err != nil {
+		return nil, -1, err
+	}
+
+	count, err = u.subscribeRepo.Count()
+
+	return
+}
+
+func (u *subscribeUsecase) Count() (count int64, err error) {
+	return u.subscribeRepo.Count()
 }

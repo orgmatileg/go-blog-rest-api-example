@@ -76,16 +76,9 @@ func (u *TagsHandler) TagsFindAllHTTPHandler(w http.ResponseWriter, r *http.Requ
 
 	res := helper.Response{}
 
-	Examples, err := u.TUsecase.FindAll(limit, offset)
+	res.Body.Payload, res.Body.Count, res.Err = u.TUsecase.FindAll(limit, offset)
 
-	defer res.ServeJSON(w, r)
-
-	if err != nil {
-		res.Err = err
-		return
-	}
-
-	res.Body.Payload = Examples
+	res.ServeJSON(w, r)
 
 }
 

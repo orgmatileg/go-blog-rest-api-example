@@ -3,10 +3,11 @@ package http
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/orgmatileg/go-blog-rest-api-example/helper"
 	"github.com/orgmatileg/go-blog-rest-api-example/module/users"
 	"github.com/orgmatileg/go-blog-rest-api-example/module/users/model"
-	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -103,16 +104,9 @@ func (u *HttpUsersHandler) UserFindAllHttpHandler(w http.ResponseWriter, r *http
 
 	res := helper.Response{}
 
-	users, err := u.UUsecase.FindAll(limit, offset, order)
+	res.Body.Payload, res.Body.Count, res.Err = u.UUsecase.FindAll(limit, offset, order)
 
-	defer res.ServeJSON(w, r)
-
-	if err != nil {
-		res.Err = err
-		return
-	}
-
-	res.Body.Payload = users
+	res.ServeJSON(w, r)
 
 }
 

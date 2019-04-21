@@ -100,15 +100,8 @@ func (u *SubscribeHandler) SubscribeFindAllHTTPHandler(w http.ResponseWriter, r 
 
 	res := helper.Response{}
 
-	subscribeList, err := u.SUsecase.FindAll(limit, offset, order)
+	res.Body.Payload, res.Body.Count, res.Err = u.SUsecase.FindAll(limit, offset, order)
 
-	defer res.ServeJSON(w, r)
-
-	if err != nil {
-		res.Err = err
-		return
-	}
-
-	res.Body.Payload = subscribeList
+	res.ServeJSON(w, r)
 
 }
