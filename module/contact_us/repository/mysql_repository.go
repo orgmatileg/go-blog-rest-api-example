@@ -3,9 +3,10 @@ package repository
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
+
 	"github.com/orgmatileg/go-blog-rest-api-example/module/contact_us"
 	"github.com/orgmatileg/go-blog-rest-api-example/module/contact_us/model"
-	"strconv"
 )
 
 // mysqlContactUsRepository struct
@@ -140,4 +141,29 @@ func (r *mysqlContactUsRepository) Delete(id string) error {
 	}
 
 	return nil
+}
+
+// Count Posts
+func (r *mysqlContactUsRepository) Count() (count int64, err error) {
+
+	query := `
+	SELECT COUNT(*)
+	FROM tbl_contact_us
+	`
+
+	statement, err := r.db.Prepare(query)
+
+	if err != nil {
+		return -1, err
+	}
+
+	defer statement.Close()
+
+	err = statement.QueryRow().Scan(&count)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return count, nil
 }

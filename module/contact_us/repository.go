@@ -8,4 +8,5 @@ type Repository interface {
 	FindByID(id string) (*model.ContactUs, error)
 	FindAll(limit, offset, order string) (model.ContactUsList, error)
 	Delete(id string) error
+	Count() (int64, error)
 }

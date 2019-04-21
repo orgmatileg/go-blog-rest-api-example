@@ -2,10 +2,11 @@ package http
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/orgmatileg/go-blog-rest-api-example/helper"
 	"github.com/orgmatileg/go-blog-rest-api-example/module/contact_us"
 	"github.com/orgmatileg/go-blog-rest-api-example/module/contact_us/model"
-	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -100,16 +101,9 @@ func (u *HttpContactUsHandler) ContactUsFindAllHttpHandler(w http.ResponseWriter
 
 	res := helper.Response{}
 
-	mcl, err := u.CUsecase.FindAll(limit, offset, order)
+	res.Body.Payload, res.Body.Count, res.Err = u.CUsecase.FindAll(limit, offset, order)
 
-	defer res.ServeJSON(w, r)
-
-	if err != nil {
-		res.Err = err
-		return
-	}
-
-	res.Body.Payload = mcl
+	res.ServeJSON(w, r)
 
 }
 

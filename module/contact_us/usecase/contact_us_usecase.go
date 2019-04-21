@@ -16,33 +16,34 @@ func NewContactUsUsecase(cr contact_us.Repository) contact_us.Usecase {
 }
 
 func (u *contactUsUsecase) Save(mc *model.ContactUs) (err error) {
-
-	err = u.contactUsRepo.Save(mc)
-
-	return err
+	return u.contactUsRepo.Save(mc)
 }
 
 func (u *contactUsUsecase) FindByID(idContact string) (mc *model.ContactUs, err error) {
-
-	mc, err = u.contactUsRepo.FindByID(idContact)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return mc, nil
+	return u.contactUsRepo.FindByID(idContact)
 }
 
-func (u *contactUsUsecase) FindAll(limit, offset, order string) (mcl model.ContactUsList, err error) {
+func (u *contactUsUsecase) FindAll(limit, offset, order string) (mcl model.ContactUsList, count int64, err error) {
 
 	mcl, err = u.contactUsRepo.FindAll(limit, offset, order)
 
-	return mcl, err
+	if err != nil {
+		return nil, -1, err
+	}
+
+	count, err = u.contactUsRepo.Count()
+
+	if err != nil {
+		return nil, -1, err
+	}
+
+	return
 }
 
 func (u *contactUsUsecase) Delete(idContact string) (err error) {
+	return u.contactUsRepo.Delete(idContact)
+}
 
-	err = u.contactUsRepo.Delete(idContact)
-
-	return err
+func (u *contactUsUsecase) Count() (int64, error) {
+	return u.contactUsRepo.Count()
 }
