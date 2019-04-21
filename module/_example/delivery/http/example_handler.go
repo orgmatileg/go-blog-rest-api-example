@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/orgmatileg/go-blog-rest-api-example/helper"
-	"github.com/orgmatileg/go-blog-rest-api-example/module/example"
-	"github.com/orgmatileg/go-blog-rest-api-example/module/example/model"
+	example "github.com/orgmatileg/go-blog-rest-api-example/module/_example"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/_example/model"
 
 	"github.com/gorilla/mux"
 )

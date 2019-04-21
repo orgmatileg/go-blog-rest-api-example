@@ -33,10 +33,15 @@ import (
 	_tagsRepo "github.com/orgmatileg/go-blog-rest-api-example/module/tags/repository"
 	_tagsUcase "github.com/orgmatileg/go-blog-rest-api-example/module/tags/usecase"
 
-	// Tags
+	// Subscribe
 	hSubscribe "github.com/orgmatileg/go-blog-rest-api-example/module/subscribe/delivery/http"
 	_subscribeRepo "github.com/orgmatileg/go-blog-rest-api-example/module/subscribe/repository"
 	_subscribeUcase "github.com/orgmatileg/go-blog-rest-api-example/module/subscribe/usecase"
+
+	// Settings
+	hSettings "github.com/orgmatileg/go-blog-rest-api-example/module/settings/delivery/http"
+	_settingsRepo "github.com/orgmatileg/go-blog-rest-api-example/module/settings/repository"
+	_settingsUcase "github.com/orgmatileg/go-blog-rest-api-example/module/settings/usecase"
 
 	"github.com/gorilla/mux"
 )
@@ -89,10 +94,15 @@ func InitRouter() *mux.Router {
 	tagsUcase := _tagsUcase.NewTagsUsecase(tagsRepo)
 	hTags.NewTagsHTTPHandler(rv1, tagsUcase)
 
-	// Tags
+	// Subscribe
 	subscribeRepo := _subscribeRepo.NewSubscribeRepositoryMysql(dbConn)
 	subscribeUcase := _subscribeUcase.NewSubscribeUsecase(subscribeRepo)
 	hSubscribe.NewSubscribeHTTPHandler(rv1, subscribeUcase)
+
+	// Settings
+	settingsRepo := _settingsRepo.NewSettingsRepositoryMysql(dbConn)
+	settingsUcase := _settingsUcase.NewSettingsUsecase(settingsRepo)
+	hSettings.NewSettingsHttpHandler(rv1, settingsUcase)
 
 	return r
 }

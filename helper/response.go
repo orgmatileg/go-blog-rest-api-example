@@ -51,10 +51,12 @@ func (c *Response) ServeJSON(w http.ResponseWriter, r *http.Request) {
 
 		switch c.Err.Error() {
 		case "sql: no rows in result set":
+			c.Body.Payload = nil
 			c.Body.Description = "Data tidak ditemukan"
 			c.Body.StatusCode = 404
 			w.WriteHeader(404)
 		default:
+			c.Body.Payload = nil
 			c.Body.Description = c.Err.Error()
 			c.Body.StatusCode = 403
 			w.WriteHeader(403)

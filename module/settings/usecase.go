@@ -1,13 +1,9 @@
-package example
+package settings
 
-import "github.com/orgmatileg/go-blog-rest-api-example/module/example/model"
+import "github.com/orgmatileg/go-blog-rest-api-example/module/settings/model"
 
 type Usecase interface {
-	Save(*model.Example) error
-	FindByID(id string) (*model.Example, error)
-	FindAll(limit, offset, order string) (model.ExampleList, error)
-	Update(id string, exampleModel *model.Example) (*string, error)
-	Delete(id string) error
-	IsExistsByID(id string) (bool, error)
-	Count() (int64, error)
+	FindByID(id string) (*model.Setting, error)
+	FindAll(limit, offset string) (msl model.Settings, count int64, err error)
+	Update(id string, settingModel *model.Setting) (*string, error)
 }

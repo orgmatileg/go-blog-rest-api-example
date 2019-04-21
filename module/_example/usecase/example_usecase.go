@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/orgmatileg/go-blog-rest-api-example/module/example"
-	"github.com/orgmatileg/go-blog-rest-api-example/module/example/model"
+	example "github.com/orgmatileg/go-blog-rest-api-example/module/_example"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/_example/model"
 )
 
 type exampleUsecase struct {
@@ -23,8 +23,16 @@ func (u *exampleUsecase) FindByID(id string) (me *model.Example, err error) {
 	return u.exampleRepo.FindByID(id)
 }
 
-func (u *exampleUsecase) FindAll(limit, offset, order string) (lme model.ExampleList, err error) {
-	return u.exampleRepo.FindAll(limit, offset, order)
+func (u *exampleUsecase) FindAll(limit, offset, order string) (mel model.ExampleList, count int64, err error) {
+	mel, err = u.exampleRepo.FindAll(limit, offset, order)
+
+	if err != nil {
+		return nil, -1, err
+	}
+
+	count, err = u.exampleRepo.Count()
+
+	return
 }
 
 func (u *exampleUsecase) Update(id string, me *model.Example) (rowAffected *string, err error) {

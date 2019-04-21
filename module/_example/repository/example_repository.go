@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/orgmatileg/go-blog-rest-api-example/module/example"
-	"github.com/orgmatileg/go-blog-rest-api-example/module/example/model"
+	example "github.com/orgmatileg/go-blog-rest-api-example/module/_example"
+	"github.com/orgmatileg/go-blog-rest-api-example/module/_example/model"
 )
 
 // mysqlExampleRepository struct
