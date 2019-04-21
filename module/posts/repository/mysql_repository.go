@@ -340,3 +340,28 @@ func (r *mysqlPostsRepository) IsExistsByID(id string) (isExist bool, err error)
 
 	return isExist, nil
 }
+
+// Count Posts
+func (r *mysqlPostsRepository) Count() (count int64, err error) {
+
+	query := `
+	SELECT COUNT(*)
+	FROM tbl_posts
+	`
+
+	statement, err := r.db.Prepare(query)
+
+	if err != nil {
+		return -1, err
+	}
+
+	defer statement.Close()
+
+	err = statement.QueryRow().Scan(&count)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return count, nil
+}

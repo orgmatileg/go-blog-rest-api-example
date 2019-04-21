@@ -41,13 +41,18 @@ func (u *postsUsecase) Save(mp *model.Post) (err error) {
 }
 
 func (u *postsUsecase) FindByID(id string) (me *model.Post, err error) {
-
 	return u.postsRepo.FindByID(id)
 }
 
-func (u *postsUsecase) FindAll(limit, offset, order, isPublish string) (lmp model.Posts, err error) {
+func (u *postsUsecase) FindAll(limit, offset, order, isPublish string) (mpl model.Posts, count int64, err error) {
 
-	return u.postsRepo.FindAll(limit, offset, order, isPublish)
+	mpl, err = u.postsRepo.FindAll(limit, offset, order, isPublish)
+	if err != nil {
+		return nil, -1, err
+	}
+	count, err = u.postsRepo.Count()
+
+	return
 }
 
 func (u *postsUsecase) Update(id string, mp *model.Post) (rowAffected *string, err error) {
@@ -95,12 +100,9 @@ func (u *postsUsecase) Delete(idPost string) (err error) {
 }
 
 func (u *postsUsecase) IsExistsByID(idPost string) (isExist bool, err error) {
+	return u.postsRepo.IsExistsByID(idPost)
+}
 
-	isExist, err = u.postsRepo.IsExistsByID(idPost)
-
-	if err != nil {
-		return false, err
-	}
-
-	return isExist, nil
+func (u *postsUsecase) Count() (count int64, err error) {
+	return u.postsRepo.Count()
 }

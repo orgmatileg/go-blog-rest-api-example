@@ -12,15 +12,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// HTTPPostsHandler struct
-type HTTPPostsHandler struct {
+// PostsHandler struct
+type PostsHandler struct {
 	PUsecase posts.Usecase
 }
 
 // NewPostsHTTPHandler func
 func NewPostsHTTPHandler(r *mux.Router, pu posts.Usecase) {
 
-	handler := HTTPPostsHandler{
+	handler := PostsHandler{
 		PUsecase: pu,
 	}
 
@@ -33,7 +33,7 @@ func NewPostsHTTPHandler(r *mux.Router, pu posts.Usecase) {
 }
 
 // PostsSaveHTTPHandler handler
-func (u *HTTPPostsHandler) PostsSaveHTTPHandler(w http.ResponseWriter, r *http.Request) {
+func (u *PostsHandler) PostsSaveHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -62,7 +62,7 @@ func (u *HTTPPostsHandler) PostsSaveHTTPHandler(w http.ResponseWriter, r *http.R
 }
 
 // PostsFindByIDHTTPHandler handler
-func (u *HTTPPostsHandler) PostsFindByIDHTTPHandler(w http.ResponseWriter, r *http.Request) {
+func (u *PostsHandler) PostsFindByIDHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	res := helper.Response{}
@@ -83,7 +83,7 @@ func (u *HTTPPostsHandler) PostsFindByIDHTTPHandler(w http.ResponseWriter, r *ht
 }
 
 // PostsFindAllHTTPHandler handler
-func (u *HTTPPostsHandler) PostsFindAllHTTPHandler(w http.ResponseWriter, r *http.Request) {
+func (u *PostsHandler) PostsFindAllHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
 	queryParam := r.URL.Query()
 
@@ -111,21 +111,14 @@ func (u *HTTPPostsHandler) PostsFindAllHTTPHandler(w http.ResponseWriter, r *htt
 
 	res := helper.Response{}
 
-	Examples, err := u.PUsecase.FindAll(limit, offset, order, isPublish)
+	res.Body.Payload, res.Body.Count, res.Err = u.PUsecase.FindAll(limit, offset, order, isPublish)
 
 	defer res.ServeJSON(w, r)
-
-	if err != nil {
-		res.Err = err
-		return
-	}
-
-	res.Body.Payload = Examples
 
 }
 
 // PostsUpdateHTTPHandler handler
-func (u *HTTPPostsHandler) PostsUpdateHTTPHandler(w http.ResponseWriter, r *http.Request) {
+func (u *PostsHandler) PostsUpdateHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	res := helper.Response{}
@@ -159,7 +152,7 @@ func (u *HTTPPostsHandler) PostsUpdateHTTPHandler(w http.ResponseWriter, r *http
 }
 
 // PostsDeleteHTTPHandler handler
-func (u *HTTPPostsHandler) PostsDeleteHTTPHandler(w http.ResponseWriter, r *http.Request) {
+func (u *PostsHandler) PostsDeleteHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -181,7 +174,7 @@ func (u *HTTPPostsHandler) PostsDeleteHTTPHandler(w http.ResponseWriter, r *http
 }
 
 // PostsIsExistsByIDHTTPHandler handler
-func (u *HTTPPostsHandler) PostsIsExistsByIDHTTPHandler(w http.ResponseWriter, r *http.Request) {
+func (u *PostsHandler) PostsIsExistsByIDHTTPHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	res := helper.Response{}
