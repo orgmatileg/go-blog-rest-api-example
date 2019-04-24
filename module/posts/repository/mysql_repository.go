@@ -52,7 +52,7 @@ func (r *mysqlPostsRepository) Save(mp *model.Post) error {
 
 	defer statement.Close()
 
-	result, err := statement.Exec(mp.PostImage, mp.PostSubject, mp.PostContent, mp.Author.AuthorID, mp.CreatedAt, mp.UpdatedAt)
+	result, err := statement.Exec(mp.PostImage, mp.PostSubject, mp.PostContent, mp.Author.AuthorID, mp.IsPublish, mp.CreatedAt, mp.UpdatedAt)
 
 	if err != nil {
 		tx.Rollback()
