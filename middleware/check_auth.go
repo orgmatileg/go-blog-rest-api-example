@@ -17,7 +17,7 @@ func CheckAuth(next http.Handler) http.Handler {
 		bypassedURLs := []string{
 			"auth:POST",
 			"contact-us:POST",
-			"post:GET",
+			"posts:GET",
 			"tags:GET",
 			"settings:GET",
 		}
