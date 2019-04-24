@@ -24,7 +24,7 @@ func CheckAuth(next http.Handler) http.Handler {
 
 		// regex untuk hapus /v1/
 		re := regexp.MustCompile("/v[0-9]{1}/")
-		URLRequest := re.ReplaceAllString(r.RequestURI, "")
+		URLRequest := re.ReplaceAllString(r.URL.EscapedPath(), "")
 
 		for _, uri := range bypassedURLs {
 
