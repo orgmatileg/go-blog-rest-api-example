@@ -32,10 +32,11 @@ func (r *mysqlPostsRepository) Save(mp *model.Post) error {
 		post_subject,
 		post_content,
 		author,
+		is_publish,
 		created_at,
 		updated_at
 	)
-	VALUES (?, ?, ?, ?, ?, ?)`
+	VALUES (?, ?, ?, ?, ?, ?, ?)`
 
 	tx, err := r.db.Begin()
 
