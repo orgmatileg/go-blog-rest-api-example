@@ -347,6 +347,7 @@ func (r *mysqlPostsRepository) Count() (count int64, err error) {
 	query := `
 	SELECT COUNT(*)
 	FROM tbl_posts
+	WHERE is_publish = 1
 	`
 
 	statement, err := r.db.Prepare(query)

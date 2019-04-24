@@ -27,11 +27,12 @@ func init() {
 }
 
 func main() {
+
+	router := router.InitRouter()
+
 	originCORS := handlers.AllowedOrigins([]string{"*"})
 	headersCORS := handlers.AllowedHeaders([]string{"X-Requested-With", "Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"})
 	methodCORS := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"})
-
-	router := router.InitRouter()
 
 	log.Fatal(http.ListenAndServe(":8081", handlers.CORS(originCORS, headersCORS, methodCORS)(router)))
 
