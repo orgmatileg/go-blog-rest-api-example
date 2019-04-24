@@ -24,7 +24,10 @@ func (u *postsUsecase) Save(mp *model.Post) (err error) {
 	// Handle Photo Profile
 	defaultPhotoProfile := "https://i.ibb.co/pnP96gy/no-image-available.png"
 
-	if mp.PostImage != "" {
+	if mp.PostImage == "" {
+		mp.PostImage = defaultPhotoProfile
+
+	} else {
 		imgBB := helper.NewImgBBConn()
 		imgURL, err := imgBB.Upload(mp.PostImage)
 
@@ -33,8 +36,7 @@ func (u *postsUsecase) Save(mp *model.Post) (err error) {
 		}
 
 		mp.PostImage = imgURL
-	} else {
-		mp.PostImage = defaultPhotoProfile
+
 	}
 
 	return u.postsRepo.Save(mp)
