@@ -131,7 +131,7 @@ func (r *mysqlPostsRepository) FindByID(id string) (*model.Post, error) {
 	queryPost := `
 	SELECT * 
 	FROM tbl_v_posts
-	WHERE post_id = ? and is_publish = 1`
+	WHERE post_id = ?`
 
 	var mp model.Post
 
