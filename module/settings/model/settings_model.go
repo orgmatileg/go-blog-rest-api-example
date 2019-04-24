@@ -5,7 +5,7 @@ type Setting struct {
 	SettingID string `json:"setting_id"`
 	Type      string `json:"type"`
 	Name      string `json:"name"`
-	FieldName string
+	FieldName string `json:"field_name"`
 	Value     string `json:"value"`
 }
 

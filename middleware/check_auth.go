@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"errors"
-	"github.com/orgmatileg/go-blog-rest-api-example/config"
-	"github.com/orgmatileg/go-blog-rest-api-example/helper"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/orgmatileg/go-blog-rest-api-example/config"
+	"github.com/orgmatileg/go-blog-rest-api-example/helper"
 )
 
 // CheckAuth func Middleware
@@ -16,6 +17,9 @@ func CheckAuth(next http.Handler) http.Handler {
 		bypassedURLs := []string{
 			"auth:POST",
 			"contact-us:POST",
+			"post:GET",
+			"tags:GET",
+			"settings:GET",
 		}
 
 		// regex untuk hapus /v1/
